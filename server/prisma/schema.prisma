@@ -1,0 +1,123 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                String             @id @default(uuid())
+  name              String
+  email             String             @unique
+  password          String
+  role              String             @default("USER") // "ADMIN", "USER"
+  avatar            String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  transactions      Transaction[]
+  budgets           Budget[]
+  recurringPayments RecurringPayment[]
+  aiInsights        AIInsight[]
+  auditLogs         AuditLog[]
+  notifications     Notification[]
+
+  @@map("users")
+}
+
+model Transaction {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount          Float
+  type            String   // "INCOME", "EXPENSE"
+  category        String
+  description     String
+  paymentMethod   String   // "UPI", "CREDIT_CARD", "DEBIT_CARD", "BANK_TRANSFER", "CASH", "WALLET"
+  status          String   @default("SUCCESS") // "SUCCESS", "PENDING", "FAILED", "FLAGGED"
+  riskLevel       String   @default("LOW") // "LOW", "MEDIUM", "HIGH"
+  transactionDate DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([transactionDate])
+  @@index([type])
+  @@index([category])
+  @@map("transactions")
+}
+
+model Budget {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category  String
+  amount    Float
+  spent     Float    @default(0.0)
+  period    String   @default("MONTHLY")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, category])
+  @@map("budgets")
+}
+
+model RecurringPayment {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  amount          Float
+  frequency       String   // "DAILY", "WEEKLY", "MONTHLY", "YEARLY"
+  nextPaymentDate DateTime
+  status          String   @default("ACTIVE") // "ACTIVE", "INACTIVE"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@map("recurring_payments")
+}
+
+model AIInsight {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // "SPENDING", "SAVINGS", "BUDGET", "SUBSCRIPTION"
+  title     String
+  content   String
+  severity  String   @default("INFO") // "INFO", "WARNING", "CRITICAL"
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("ai_insights")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("audit_logs")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   // "BUDGET_WARNING", "SUSPICIOUS_TX", "AI_INSIGHT", "PAYMENT_REMINDER", "SYSTEM"
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([read])
+  @@map("notifications")
+}

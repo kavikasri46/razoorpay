@@ -1,0 +1,18 @@
+{
+  "name": "laserpay-monorepo",
+  "version": "1.0.0",
+  "description": "LaserPay: Intelligent Payments. Smarter Decisions.",
+  "private": true,
+  "scripts": {
+    "install-all": "npm install && npm run postinstall && npm install --prefix client",
+    "postinstall": "npm install --prefix server",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "build-all": "npm run build --prefix server && npm run build --prefix client",
+    "prisma:generate": "npm run prisma:generate --prefix server",
+    "prisma:migrate": "npm run prisma:migrate --prefix server",
+    "prisma:seed": "npm run prisma:seed --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
