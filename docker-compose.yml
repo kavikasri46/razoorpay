@@ -35,8 +35,7 @@ services:
       DATABASE_URL: postgresql://postgres:laserpay_secret@db:5432/laserpay?schema=public
       JWT_SECRET: your_jwt_secret_change_this_in_production
       PORT: 5000
-      # Optional: Add Groq key for AI features
-      # GROQ_API_KEY: your_groq_api_key
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
     ports:
       - "5000:5000"
     healthcheck:

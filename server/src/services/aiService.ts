@@ -62,7 +62,7 @@ Provide extremely professional, actionable, and specific advice. Always refer to
           { role: 'system', content: systemPrompt },
           { role: 'user', content: query },
         ],
-        model: 'llama3-8b-8192',
+        model: 'llama-3.1-8b-instant',
         temperature: 0.3,
         max_tokens: 800,
       });
@@ -151,7 +151,7 @@ The JSON must be exactly in this format (no other text around the JSON block):
     try {
       const response = await groq.chat.completions.create({
         messages: [{ role: 'user', content: systemPrompt }],
-        model: 'llama3-8b-8192',
+        model: 'llama-3.1-8b-instant',
         temperature: 0.2,
         response_format: { type: 'json_object' },
       });
