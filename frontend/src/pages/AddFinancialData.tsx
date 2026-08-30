@@ -21,7 +21,6 @@ function parseCSV(text: string) {
   const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
   if (lines.length === 0) return [];
   
-  // Headers parsing
   const headers = splitCSVLine(lines[0]);
   const rows: any[] = [];
   
@@ -91,8 +90,6 @@ export const AddFinancialData: React.FC = () => {
     { id: 'RAZORPAY_SETTLEMENTS', title: 'Razorpay Settlements', desc: 'Import settlement logs and payouts from Razorpay.' },
   ];
 
-
-
   const triggerFileInput = () => {
     fileInputRef.current?.click();
   };
@@ -113,7 +110,7 @@ export const AddFinancialData: React.FC = () => {
     setFile(selectedFile);
     setStep(2);
     
-    // Simulate real-time upload progress
+    // Simulate upload progress
     let prog = 0;
     const interval = setInterval(() => {
       prog += 10;
@@ -140,7 +137,6 @@ export const AddFinancialData: React.FC = () => {
         if (ext === 'json') {
           parsedRows = JSON.parse(text);
         } else {
-          // Parse CSV
           parsedRows = parseCSV(text);
         }
 
@@ -148,7 +144,6 @@ export const AddFinancialData: React.FC = () => {
           throw new Error('No records found in this file.');
         }
 
-        // Send to backend for column mapping and initial validation
         const response = await api.post('/batches/upload', {
           filename: selectedFile.name,
           sourceType,
@@ -196,7 +191,6 @@ export const AddFinancialData: React.FC = () => {
     setIsImporting(true);
     setImportProgress(0);
     
-    // Simulate import progress
     const steps = 10;
     for (let i = 1; i <= steps; i++) {
       await new Promise(r => setTimeout(r, 150));
@@ -241,16 +235,16 @@ export const AddFinancialData: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 max-w-5xl mx-auto text-left font-sans text-slate-800 antialiased">
       {/* Header */}
-      <div>
-        <h2 className="text-xl font-bold text-white">Add Financial Data</h2>
-        <p className="text-xs text-slate-450 mt-1">Upload and organize transactional ledgers for the Finance Controller.</p>
+      <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm">
+        <h2 className="text-xl font-black text-slate-900 tracking-tight font-outfit">Add Financial Data</h2>
+        <p className="text-xs text-slate-500 mt-1 font-semibold">Upload and organize transactional ledgers for the Finance Controller.</p>
       </div>
 
       {/* Stepper Status Bar */}
       {step <= 4 && (
-        <div className="bg-slate-900 border border-slate-850 p-4 rounded-xl flex items-center justify-between shadow-lg">
+        <div className="bg-white border border-slate-100 p-4 rounded-xl flex items-center justify-between shadow-sm">
           {[
             { num: 1, label: 'Choose' },
             { num: 2, label: 'Upload' },
@@ -261,19 +255,19 @@ export const AddFinancialData: React.FC = () => {
               <div className="flex items-center gap-2">
                 <span className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                   step === s.num 
-                    ? 'bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20 scale-110' 
+                    ? 'bg-teal-650 text-white shadow-md shadow-teal-600/10 scale-110' 
                     : step > s.num 
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                    : 'bg-slate-800 text-slate-500'
+                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-105' 
+                    : 'bg-slate-50 text-slate-400 border border-slate-200'
                 }`}>
                   {step > s.num ? <Check className="h-3 w-3" /> : s.num}
                 </span>
-                <span className={`text-xs font-semibold ${step === s.num ? 'text-white' : 'text-slate-500'}`}>
+                <span className={`text-xs font-bold ${step === s.num ? 'text-slate-900 font-extrabold' : 'text-slate-400'}`}>
                   {s.label}
                 </span>
               </div>
               {idx < arr.length - 1 && (
-                <div className="flex-1 h-[2px] bg-slate-800 mx-4 hidden sm:block" />
+                <div className="flex-1 h-[2px] bg-slate-100 mx-4 hidden sm:block" />
               )}
             </React.Fragment>
           ))}
@@ -283,31 +277,31 @@ export const AddFinancialData: React.FC = () => {
       {/* STEP 1: CHOOSE DATA TYPE */}
       {step === 1 && (
         <div className="space-y-6">
-          <Card className="bg-slate-900/60 border-slate-850 p-8 text-center flex flex-col items-center">
-            <Database className="h-10 w-10 text-cyan-400 mb-3" />
-            <h3 className="text-base font-bold text-white mb-2">Select Data Source Type</h3>
-            <p className="text-xs text-slate-400 max-w-md">Choose the type of financial ledger you want to import into your company's accounting pipeline.</p>
+          <Card className="bg-white border-slate-100 p-8 text-center flex flex-col items-center rounded-2xl shadow-sm">
+            <Database className="h-10 w-10 text-teal-600 mb-3" />
+            <h3 className="text-sm font-black text-slate-900 font-outfit mb-1.5 uppercase tracking-wide">Select Data Source Type</h3>
+            <p className="text-xs text-slate-500 max-w-md font-medium">Choose the type of financial ledger you want to import into your company's accounting pipeline.</p>
           </Card>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {dataTypes.map((type) => (
               <Card 
                 key={type.id} 
-                className={`bg-slate-900 border p-6 flex flex-col justify-between hover:border-cyan-500/40 hover:bg-slate-900/80 cursor-pointer transition-all duration-350 ${
-                  sourceType === type.id ? 'border-cyan-500 ring-1 ring-cyan-500/20' : 'border-slate-850'
+                className={`bg-white border p-6 flex flex-col justify-between hover:border-teal-500/50 hover:bg-slate-50/30 cursor-pointer transition-all duration-300 rounded-2xl shadow-sm ${
+                  sourceType === type.id ? 'border-teal-500 ring-1 ring-teal-500/10 bg-teal-50/10' : 'border-slate-200/80'
                 }`}
                 onClick={() => setSourceType(type.id)}
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-bold text-white tracking-wide">{type.title}</span>
-                    <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${
-                      sourceType === type.id ? 'border-cyan-500 bg-cyan-500 text-slate-950' : 'border-slate-700'
+                    <span className="text-sm font-bold text-slate-800 tracking-wide font-outfit">{type.title}</span>
+                    <span className={`h-4.5 w-4.5 rounded-full border flex items-center justify-center ${
+                      sourceType === type.id ? 'border-teal-650 bg-teal-650 text-white' : 'border-slate-300'
                     }`}>
                       {sourceType === type.id && <Check className="h-2.5 w-2.5" />}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-450 leading-relaxed">{type.desc}</p>
+                  <p className="text-xs text-slate-500 leading-relaxed font-semibold">{type.desc}</p>
                 </div>
               </Card>
             ))}
@@ -317,7 +311,7 @@ export const AddFinancialData: React.FC = () => {
             <Button 
               disabled={!sourceType} 
               onClick={() => triggerFileInput()}
-              className="flex items-center gap-2"
+              className="bg-teal-650 hover:bg-teal-750 text-white text-xs font-bold rounded-xl px-5 py-2.5 shadow-sm border-0 flex items-center gap-1.5"
             >
               Next: Upload File
               <ArrowRight className="h-4 w-4" />
@@ -335,25 +329,25 @@ export const AddFinancialData: React.FC = () => {
 
       {/* STEP 2: UPLOAD PROGRESS */}
       {step === 2 && (
-        <Card className="bg-slate-900 border-slate-850 p-12 flex flex-col items-center text-center justify-center space-y-6 min-h-[300px]">
+        <Card className="bg-white border-slate-100 p-12 flex flex-col items-center text-center justify-center space-y-6 min-h-[300px] rounded-3xl shadow-sm">
           {isProcessing ? (
             <>
-              <RefreshCw className="h-10 w-10 text-cyan-400 animate-spin" />
+              <RefreshCw className="h-10 w-10 text-teal-600 animate-spin" />
               <div>
-                <h4 className="text-sm font-bold text-white mb-1">Processing Records...</h4>
-                <p className="text-xs text-slate-500">Checking column headers and auditing database duplicates.</p>
+                <h4 className="text-sm font-bold text-slate-800 mb-1 font-outfit">Processing Records...</h4>
+                <p className="text-xs text-slate-500 font-semibold">Checking column headers and auditing database duplicates.</p>
               </div>
             </>
           ) : (
             <>
-              <UploadCloud className="h-10 w-10 text-cyan-400 animate-pulse" />
+              <UploadCloud className="h-10 w-10 text-teal-600 animate-pulse" />
               <div className="w-full max-w-md space-y-2">
-                <div className="flex justify-between text-xs text-slate-400">
+                <div className="flex justify-between text-xs text-slate-500 font-bold">
                   <span>Uploading {file?.name}</span>
                   <span>{uploadProgress}%</span>
                 </div>
-                <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-850">
-                  <div className="bg-cyan-500 h-full transition-all duration-150" style={{ width: `${uploadProgress}%` }} />
+                <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200/50">
+                  <div className="bg-teal-600 h-full transition-all duration-150" style={{ width: `${uploadProgress}%` }} />
                 </div>
               </div>
             </>
@@ -366,21 +360,21 @@ export const AddFinancialData: React.FC = () => {
         <div className="space-y-6">
           {/* Warning banner if mapping is uncertain */}
           {isMappingUncertain() ? (
-            <div className="bg-amber-950/20 border border-amber-500/20 rounded-xl p-4 flex gap-3 text-left">
-              <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3 text-left">
+              <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs font-bold text-amber-400">Please review fields</h4>
-                <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                <h4 className="text-xs font-bold text-amber-800">Please review fields mapping</h4>
+                <p className="text-[11px] text-slate-600 mt-0.5 leading-relaxed font-semibold">
                   We could not automatically resolve some column headers. Ensure that at least **Amount**, **Date**, and **Transaction ID** are mapped correctly to prevent import issues.
                 </p>
               </div>
             </div>
           ) : (
-            <div className="bg-cyan-950/20 border border-cyan-500/20 rounded-xl p-4 flex gap-3 text-left">
-              <Info className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
+            <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex gap-3 text-left">
+              <Info className="h-5 w-5 text-emerald-700 shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs font-bold text-cyan-400">Columns Auto-Detected</h4>
-                <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                <h4 className="text-xs font-bold text-emerald-800">Columns Auto-Detected</h4>
+                <p className="text-[11px] text-slate-600 mt-0.5 leading-relaxed font-semibold">
                   All major fields mapped automatically. Verify the preview table and mapping below before proceeding.
                 </p>
               </div>
@@ -390,21 +384,21 @@ export const AddFinancialData: React.FC = () => {
           {/* Stepper Details */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left: Column Mapping Selectors */}
-            <Card className="bg-slate-900 border-slate-850 p-6 space-y-4 lg:col-span-1">
-              <h3 className="text-xs font-bold text-white tracking-wider uppercase border-b border-slate-800 pb-3">Field Mapping</h3>
+            <Card className="bg-white border-slate-100 p-6 space-y-4 lg:col-span-1 rounded-2xl shadow-sm">
+              <h3 className="text-xs font-black text-slate-800 tracking-wider uppercase border-b border-slate-100 pb-3 font-outfit">Field Mapping</h3>
               
               {Object.keys(mapping).map((field) => {
                 const availableHeaders = Object.keys(file ? processedData.previewRecords[0] : {});
                 return (
                   <div key={field} className="text-left space-y-1.5">
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-400">
                       {field === 'transactionId' ? 'Transaction ID' : field}
-                      {['amount', 'date', 'transactionId'].includes(field) && <span className="text-cyan-400 ml-1">*</span>}
+                      {['amount', 'date', 'transactionId'].includes(field) && <span className="text-teal-600 ml-0.5 font-bold">*</span>}
                     </label>
                     <select
                       value={mapping[field] || ''}
                       onChange={(e) => handleMappingChange(field, e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                      className="w-full bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-teal-500 focus:bg-white transition-all font-bold cursor-pointer"
                     >
                       <option value="">-- Ignore Field --</option>
                       {availableHeaders.map(h => (
@@ -412,11 +406,11 @@ export const AddFinancialData: React.FC = () => {
                       ))}
                     </select>
                     {mapping[field] ? (
-                      <span className="text-[10px] text-emerald-400 flex items-center gap-1 mt-1 font-medium">
+                      <span className="text-[10px] text-emerald-600 flex items-center gap-1 mt-1 font-bold">
                         <Check className="h-3 w-3" /> Mapped to "{mapping[field]}"
                       </span>
                     ) : ['amount', 'date', 'transactionId'].includes(field) ? (
-                      <span className="text-[10px] text-amber-500 flex items-center gap-1 mt-1 font-medium">
+                      <span className="text-[10px] text-amber-600 flex items-center gap-1 mt-1 font-bold">
                         <AlertCircle className="h-3 w-3" /> Required field is unmapped
                       </span>
                     ) : null}
@@ -428,21 +422,21 @@ export const AddFinancialData: React.FC = () => {
             {/* Right: Preview Grid & Validation Errors */}
             <div className="lg:col-span-2 space-y-6">
               {/* Validation Summary Card */}
-              <Card className="bg-slate-900 border-slate-850 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <Card className="bg-white border-slate-100 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 rounded-2xl shadow-sm">
                 <div>
-                  <h4 className="text-sm font-bold text-white">Validation Report</h4>
-                  <p className="text-xs text-slate-400 mt-0.5">Found {processedData.batch.recordCount} total records in file.</p>
+                  <h4 className="text-sm font-bold text-slate-800 font-outfit">Validation Report</h4>
+                  <p className="text-xs text-slate-500 mt-0.5 font-semibold">Found {processedData.batch.recordCount} total records in file.</p>
                 </div>
                 <div className="flex gap-3">
-                  <div className="bg-slate-950 border border-slate-850 px-4 py-2 rounded-lg text-center min-w-[90px]">
-                    <p className="text-xs text-slate-500">Duplicates</p>
-                    <p className={`text-base font-bold mt-0.5 ${processedData.duplicatesCount > 0 ? 'text-amber-400' : 'text-white'}`}>
+                  <div className="bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-center min-w-[90px]">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase">Duplicates</p>
+                    <p className={`text-base font-black mt-0.5 font-outfit ${processedData.duplicatesCount > 0 ? 'text-amber-650' : 'text-slate-800'}`}>
                       {processedData.duplicatesCount}
                     </p>
                   </div>
-                  <div className="bg-slate-950 border border-slate-850 px-4 py-2 rounded-lg text-center min-w-[90px]">
-                    <p className="text-xs text-slate-500">Errors</p>
-                    <p className={`text-base font-bold mt-0.5 ${processedData.hasValidationErrors ? 'text-red-400' : 'text-emerald-400'}`}>
+                  <div className="bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-center min-w-[90px]">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase">Errors</p>
+                    <p className={`text-base font-black mt-0.5 font-outfit ${processedData.hasValidationErrors ? 'text-rose-600' : 'text-emerald-600'}`}>
                       {processedData.hasValidationErrors ? 'Yes' : 'None'}
                     </p>
                   </div>
@@ -450,24 +444,24 @@ export const AddFinancialData: React.FC = () => {
               </Card>
 
               {/* Data Preview Table */}
-              <Card className="bg-slate-900 border-slate-850 p-6 text-left space-y-4">
-                <h4 className="text-xs font-bold text-white tracking-wider uppercase">File Preview (First 5 Rows)</h4>
+              <Card className="bg-white border-slate-100 p-6 text-left space-y-4 rounded-2xl shadow-sm">
+                <h4 className="text-xs font-black text-slate-800 tracking-wider uppercase font-outfit">File Preview (First 5 Rows)</h4>
                 
-                <div className="overflow-x-auto border border-slate-850 rounded-lg">
+                <div className="overflow-x-auto border border-slate-200 rounded-xl">
                   <table className="w-full text-xs text-left">
-                    <thead className="bg-slate-950 border-b border-slate-850 text-slate-400 uppercase text-[10px]">
+                    <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[9px] font-bold">
                       <tr>
                         {Object.keys(processedData.previewRecords[0] || {}).map((header) => (
                           <th key={header} className="px-4 py-3 font-semibold">{header}</th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-850">
+                    <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
                       {processedData.previewRecords.slice(0, 5).map((rec: any, idx: number) => (
-                        <tr key={idx} className="hover:bg-slate-850/40">
+                        <tr key={idx} className="hover:bg-slate-50/30">
                           {Object.values(rec).map((val: any, vIdx: number) => (
-                            <td key={vIdx} className="px-4 py-3 text-slate-300 truncate max-w-[150px]">
-                              {val !== null ? String(val) : <span className="text-slate-600">NULL</span>}
+                            <td key={vIdx} className="px-4 py-3 text-slate-650 truncate max-w-[150px]">
+                              {val !== null ? String(val) : <span className="text-slate-400 font-bold">NULL</span>}
                             </td>
                           ))}
                         </tr>
@@ -479,16 +473,16 @@ export const AddFinancialData: React.FC = () => {
 
               {/* Row validation checks list (if any errors exist) */}
               {processedData.hasValidationErrors && (
-                <Card className="bg-slate-900 border-slate-850 p-6 text-left space-y-3">
-                  <h4 className="text-xs font-bold text-red-400 uppercase flex items-center gap-1.5">
+                <Card className="bg-white border-slate-105 p-6 text-left space-y-3 rounded-2xl shadow-sm">
+                  <h4 className="text-xs font-black text-rose-600 uppercase flex items-center gap-1.5 font-outfit">
                     <AlertCircle className="h-4 w-4" /> Detected Validation Exceptions
                   </h4>
                   <div className="max-h-40 overflow-y-auto space-y-2 pr-2">
                     {processedData.previewRecords
                       .filter((r: any) => r.validationErrors && r.validationErrors.length > 0)
                       .map((r: any, idx: number) => (
-                        <div key={idx} className="bg-red-950/10 border border-red-500/10 rounded-lg p-2 text-xs flex justify-between">
-                          <span className="text-slate-400">Txn Ref: {r.reference || r.transactionId || `Row ${idx + 1}`}</span>
+                        <div key={idx} className="bg-rose-50/50 border border-rose-100 rounded-xl p-2.5 text-xs flex justify-between">
+                          <span className="text-slate-500 font-bold">Txn Ref: {r.reference || r.transactionId || `Row ${idx + 1}`}</span>
                           <div className="flex gap-1.5">
                             {r.validationErrors.map((err: string) => (
                               <Badge key={err} variant="danger">{getValidationErrorMsg(err)}</Badge>
@@ -503,14 +497,14 @@ export const AddFinancialData: React.FC = () => {
           </div>
 
           {/* Action buttons */}
-          <div className="flex justify-between items-center pt-6 border-t border-slate-900">
-            <Button variant="outline" onClick={() => setStep(1)}>
+          <div className="flex justify-between items-center pt-6 border-t border-slate-100">
+            <Button onClick={() => setStep(1)} className="bg-slate-100 hover:bg-slate-200 text-slate-750 text-xs font-bold rounded-xl px-4 py-2.5 shadow-none border-0">
               Back
             </Button>
             <Button 
               disabled={isMappingUncertain()} 
               onClick={handleProceedToImport}
-              className="flex items-center gap-2"
+              className="bg-teal-650 hover:bg-teal-750 text-white text-xs font-bold rounded-xl px-5 py-2.5 shadow-sm border-0 flex items-center gap-1.5"
             >
               Continue to Import
               <ArrowRight className="h-4 w-4" />
@@ -523,42 +517,42 @@ export const AddFinancialData: React.FC = () => {
       {step === 4 && processedData && (
         <div className="space-y-6 max-w-2xl mx-auto">
           {isImporting ? (
-            <Card className="bg-slate-900 border-slate-850 p-12 flex flex-col items-center text-center justify-center space-y-6">
-              <RefreshCw className="h-10 w-10 text-cyan-400 animate-spin" />
+            <Card className="bg-white border-slate-100 p-12 flex flex-col items-center text-center justify-center space-y-6 rounded-3xl shadow-sm">
+              <RefreshCw className="h-10 w-10 text-teal-600 animate-spin" />
               <div className="w-full space-y-2">
-                <div className="flex justify-between text-xs text-slate-400">
+                <div className="flex justify-between text-xs text-slate-500 font-bold">
                   <span>Importing Records into Database...</span>
                   <span>{importProgress}%</span>
                 </div>
-                <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-850">
-                  <div className="bg-cyan-500 h-full transition-all duration-150" style={{ width: `${importProgress}%` }} />
+                <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200/50">
+                  <div className="bg-teal-600 h-full transition-all duration-150" style={{ width: `${importProgress}%` }} />
                 </div>
-                <p className="text-[10px] text-slate-500 pt-1">Processing records safety write: checking duplicates constraints.</p>
+                <p className="text-[10px] text-slate-400 font-medium pt-1">Processing records safety write: checking duplicates constraints.</p>
               </div>
             </Card>
           ) : (
-            <Card className="bg-slate-900 border-slate-850 p-8 space-y-6 text-left">
+            <Card className="bg-white border-slate-100 p-8 space-y-6 text-left rounded-3xl shadow-sm">
               <div>
-                <h3 className="text-sm font-bold text-white mb-1">Finalize Import</h3>
-                <p className="text-xs text-slate-400">Configure how we should resolve existing financial transactions.</p>
+                <h3 className="text-sm font-black text-slate-800 font-outfit mb-1">Finalize Import</h3>
+                <p className="text-xs text-slate-500 font-semibold">Configure how we should resolve existing financial transactions.</p>
               </div>
 
               {/* Duplicates Alert Box */}
               {processedData.duplicatesCount > 0 ? (
-                <div className="bg-amber-950/20 border border-amber-500/20 rounded-xl p-4 space-y-3">
+                <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 space-y-3">
                   <div className="flex gap-2">
-                    <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                    <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-xs font-bold text-amber-400">
+                      <h4 className="text-xs font-bold text-amber-800">
                         {processedData.duplicatesCount} duplicate records found
                       </h4>
-                      <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                      <p className="text-[11px] text-slate-650 mt-0.5 leading-relaxed font-semibold">
                         There are {processedData.duplicatesCount} records in this file that already exist in your company's database history. What would you like to do?
                       </p>
                     </div>
                   </div>
 
-                  <div className="pl-7 space-y-2.5 pt-2 border-t border-slate-800/40">
+                  <div className="pl-7 space-y-2.5 pt-2 border-t border-slate-200/60">
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input 
                         type="radio" 
@@ -566,11 +560,11 @@ export const AddFinancialData: React.FC = () => {
                         value="SKIP"
                         checked={duplicateAction === 'SKIP'}
                         onChange={(e) => setDuplicateAction(e.target.value)}
-                        className="accent-cyan-500 h-4 w-4"
+                        className="accent-teal-600 h-4 w-4"
                       />
                       <div>
-                        <span className="text-xs font-semibold text-white">Skip duplicates (Recommended)</span>
-                        <p className="text-[10px] text-slate-500">Only import new, unique records. Avoids duplicating financial accounting logs.</p>
+                        <span className="text-xs font-bold text-slate-800">Skip duplicates (Recommended)</span>
+                        <p className="text-[10px] text-slate-500 font-semibold">Only import new, unique records. Avoids duplicating financial accounting logs.</p>
                       </div>
                     </label>
 
@@ -581,21 +575,21 @@ export const AddFinancialData: React.FC = () => {
                         value="IMPORT_ALL"
                         checked={duplicateAction === 'IMPORT_ALL'}
                         onChange={(e) => setDuplicateAction(e.target.value)}
-                        className="accent-cyan-500 h-4 w-4"
+                        className="accent-teal-600 h-4 w-4"
                       />
                       <div>
-                        <span className="text-xs font-semibold text-white">Import as new records</span>
-                        <p className="text-[10px] text-slate-500">Force import all records, creating potential duplicate instances.</p>
+                        <span className="text-xs font-bold text-slate-800">Import as new records</span>
+                        <p className="text-[10px] text-slate-500 font-semibold">Force import all records, creating potential duplicate instances.</p>
                       </div>
                     </label>
                   </div>
                 </div>
               ) : (
-                <div className="bg-emerald-950/20 border border-emerald-500/25 rounded-xl p-4 flex gap-3 text-left">
-                  <CheckCircle className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex gap-3 text-left">
+                  <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="text-xs font-bold text-emerald-400">No duplicates found</h4>
-                    <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                    <h4 className="text-xs font-bold text-emerald-800">No duplicates found</h4>
+                    <p className="text-[11px] text-slate-600 mt-0.5 leading-relaxed font-semibold">
                       All records are unique. We will import them straight into the PostgreSQL database.
                     </p>
                   </div>
@@ -603,11 +597,11 @@ export const AddFinancialData: React.FC = () => {
               )}
 
               {/* Action buttons */}
-              <div className="flex justify-between items-center pt-4 border-t border-slate-900">
-                <Button variant="outline" onClick={() => setStep(3)}>
+              <div className="flex justify-between items-center pt-4 border-t border-slate-100">
+                <Button onClick={() => setStep(3)} className="bg-slate-100 hover:bg-slate-200 text-slate-750 text-xs font-bold rounded-xl px-4 py-2.5 shadow-none border-0">
                   Back
                 </Button>
-                <Button onClick={startImport} className="flex items-center gap-2">
+                <Button onClick={startImport} className="bg-teal-650 hover:bg-teal-750 text-white text-xs font-bold rounded-xl px-5 py-2.5 shadow-sm border-0 flex items-center gap-1.5">
                   Import Financial Data
                   <Check className="h-4 w-4" />
                 </Button>
@@ -619,27 +613,25 @@ export const AddFinancialData: React.FC = () => {
 
       {/* STEP 5: SUCCESS STATE SCREEN */}
       {step === 5 && importResult && (
-        <Card className="bg-slate-900 border-slate-850 p-12 flex flex-col items-center text-center justify-center space-y-6 max-w-xl mx-auto shadow-2xl">
-          <div className="h-16 w-16 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center justify-center scale-110 shadow-lg shadow-emerald-500/10">
+        <Card className="bg-white border border-slate-200/60 p-12 flex flex-col items-center text-center justify-center space-y-6 max-w-xl mx-auto rounded-3xl shadow-xl">
+          <div className="h-16 w-16 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-full flex items-center justify-center scale-110 shadow-md">
             <CheckCircle className="h-8 w-8" />
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-lg font-bold text-white">
+            <h3 className="text-base font-black text-slate-800 font-outfit">
               {importResult.data.importedCount} {formatSourceType(processedData.batch.sourceType)} records added.
             </h3>
-            <p className="text-xs text-slate-400 max-w-sm">
+            <p className="text-xs text-slate-500 font-semibold max-w-sm">
               The financial records have been parsed, validated, and safely stored in your ledger database.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 w-full pt-4 border-t border-slate-800/40">
-            <Button className="flex-1" onClick={() => toast.info('Reconciliation engine started in background.')}>
+          <div className="flex flex-col sm:flex-row gap-3 w-full pt-4 border-t border-slate-100">
+            <Button className="flex-1 bg-teal-650 hover:bg-teal-750 text-white rounded-xl font-bold py-2.5 text-xs shadow-sm border-0" onClick={() => toast.info('Reconciliation engine started in background.')}>
               Run Reconciliation
             </Button>
             <Button 
-              variant="outline" 
-              className="flex-1" 
               onClick={() => {
                 setStep(1);
                 setSourceType('');
@@ -647,6 +639,7 @@ export const AddFinancialData: React.FC = () => {
                 setProcessedData(null);
                 setImportResult(null);
               }}
+              className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold py-2.5 text-xs shadow-none border-0"
             >
               Upload More Data
             </Button>
