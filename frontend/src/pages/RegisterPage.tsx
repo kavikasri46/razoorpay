@@ -41,14 +41,14 @@ export const RegisterPage: React.FC = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-5 text-left">
       <div>
-        <h2 className="text-2xl font-extrabold tracking-tight text-white text-center mb-1">
+        <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 text-center mb-1 font-outfit">
           Create an account
         </h2>
-        <p className="text-xs text-slate-450 text-center mb-5">Set up your workspace parameters below</p>
+        <p className="text-xs text-slate-500 text-center mb-5">Set up your workspace parameters below</p>
       </div>
 
       {error && (
-        <div className="bg-red-950/20 border border-red-500/20 text-red-400 text-xs px-4 py-3 rounded-xl font-semibold">
+        <div className="bg-red-55 border border-red-200 text-red-500 text-xs px-4 py-3 rounded-xl font-semibold">
           {error}
         </div>
       )}
@@ -61,6 +61,7 @@ export const RegisterPage: React.FC = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
+          light={true}
         />
 
         <Input
@@ -70,6 +71,7 @@ export const RegisterPage: React.FC = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          light={true}
         />
 
         <Input
@@ -79,16 +81,17 @@ export const RegisterPage: React.FC = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          light={true}
         />
 
         <div className="text-left space-y-1.5">
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500">
             Workspace Access Role
           </label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as 'USER' | 'ADMIN')}
-            className="w-full bg-slate-950 border border-slate-900 text-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 transition-all cursor-pointer"
+            className="w-full bg-slate-55 border border-slate-200 text-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 focus:bg-white transition-all cursor-pointer font-medium"
           >
             <option value="USER">User (Personal Sandbox)</option>
             <option value="ADMIN">Admin (Platform Superuser)</option>
@@ -99,14 +102,14 @@ export const RegisterPage: React.FC = () => {
       <Button 
         type="submit" 
         loading={loading} 
-        className="w-full mt-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white border-0 shadow-lg shadow-indigo-600/20 active:scale-[0.97]"
+        className="w-full mt-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:bg-violet-700 text-white border-0 shadow-lg shadow-violet-600/10 rounded-xl"
       >
         Register Account
       </Button>
 
       <div className="text-center pt-2">
-        <span className="text-xs text-slate-500">Already have an account? </span>
-        <Link to="/login" className="text-xs text-cyan-400 hover:text-cyan-300 font-semibold transition-colors">
+        <span className="text-xs text-slate-550">Already have an account? </span>
+        <Link to="/login" className="text-xs text-violet-600 hover:text-violet-700 font-bold transition-colors">
           Sign In
         </Link>
       </div>
