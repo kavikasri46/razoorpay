@@ -6,9 +6,11 @@ import { errorHandler } from './middleware/errorMiddleware';
 
 const app = express();
 
-// Middleware
+// Middleware - Allow all frontend origins dynamically (Vercel, localhost, custom domains)
 app.use(cors({
-  origin: ENV.CLIENT_URL || '*',
+  origin: (_origin, callback) => {
+    callback(null, true);
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '50mb' }));
