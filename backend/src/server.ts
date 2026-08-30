@@ -8,25 +8,34 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: ENV.CLIENT_URL,
+  origin: ENV.CLIENT_URL || '*',
   credentials: true,
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Main Routes
-app.use('/api', apiRouter);
+// Root welcome & Health check endpoints
+app.get('/', (_req, res) => {
+  res.status(200).json({
+    status: 'online',
+    service: 'RazorPay Backend API',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
+  });
+});
 
-// Health check endpoint
 app.get('/health', (_req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Main Routes
+app.use('/api', apiRouter);
+
 // Centralized error handling
 app.use(errorHandler);
 
-// Start Server
-if (process.env.VERCEL !== '1') {
+// Start Server (only when not running inside serverless lambda)
+if (!process.env.VERCEL) {
   app.listen(ENV.PORT, () => {
     console.log(`=========================================`);
     console.log(`  RazorPay Server is running on port ${ENV.PORT} `);
