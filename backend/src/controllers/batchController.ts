@@ -60,6 +60,7 @@ async function validateRow(
     parsedAmount = parseFloat(String(amountVal).replace(/[^0-9.-]/g, ''));
     if (isNaN(parsedAmount)) {
       errors.push('invalid_amount');
+      parsedAmount = null;
     } else if (parsedAmount <= 0) {
       errors.push('negative_amount');
     }
