@@ -58,6 +58,7 @@ const DashboardLayout: React.FC = () => {
     { name: 'AI Insights', href: '/insights', icon: Lightbulb },
     { name: 'Financial Health', href: '/financial-health', icon: HeartPulse },
     { name: 'Data Center', href: '/data-center', icon: Database },
+    { name: 'Reconciliation', href: '/reconcile', icon: ArrowLeftRight },
     { name: 'Profile', href: '/profile', icon: User },
   ];
 

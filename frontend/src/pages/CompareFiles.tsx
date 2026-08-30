@@ -5,9 +5,6 @@ import Badge from '../components/ui/Badge';
 import { toast } from '../components/ui/Toast';
 import { 
   ArrowLeftRight, 
-  UploadCloud, 
-  CheckCircle, 
-  AlertTriangle, 
   RefreshCw, 
   Search, 
   Sparkles,
