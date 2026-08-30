@@ -26,3 +26,7 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #334155;
 }
+
+.font-outfit {
+  font-family: 'Outfit', sans-serif;
+}
