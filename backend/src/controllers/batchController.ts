@@ -382,3 +382,118 @@ export async function getBatchById(req: Request, res: Response, next: NextFuncti
     next(error);
   }
 }
+
+export async function compareStatements(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = (req as any).user.id;
+    const { bankData, invoiceData } = req.body;
+
+    if (!Array.isArray(bankData) || !Array.isArray(invoiceData)) {
+      return res.status(400).json({ success: false, message: 'Invalid payload: bankData and invoiceData arrays are required.' });
+    }
+
+    const idKeys = ['txid', 'transactionid', 'id', 'reference', 'utrref', 'utr', 'ref', 'transaction_id', 'tx_id'];
+    const amountKeys = ['amount', 'amt', 'value', 'sum', 'price'];
+
+    const getFieldVal = (obj: any, keys: string[]) => {
+      for (const k of keys) {
+        const found = Object.keys(obj).find(x => x.toLowerCase().replace(/[^a-z0-9]/g, '') === k);
+        if (found) return obj[found];
+      }
+      return null;
+    };
+
+    const bankMap = new Map<string, number>();
+    bankData.forEach(row => {
+      const idVal = String(getFieldVal(row, idKeys) || '').trim();
+      const amtVal = parseFloat(String(getFieldVal(row, amountKeys) || '0').replace(/[^0-9.-]/g, ''));
+      if (idVal && !isNaN(amtVal)) {
+        bankMap.set(idVal, amtVal);
+      }
+    });
+
+    const invoiceMap = new Map<string, number>();
+    invoiceData.forEach(row => {
+      const idVal = String(getFieldVal(row, idKeys) || '').trim();
+      const amtVal = parseFloat(String(getFieldVal(row, amountKeys) || '0').replace(/[^0-9.-]/g, ''));
+      if (idVal && !isNaN(amtVal)) {
+        invoiceMap.set(idVal, amtVal);
+      }
+    });
+
+    const allIds = new Set([...bankMap.keys(), ...invoiceMap.keys()]);
+    let total = allIds.size;
+    let matched = 0;
+    let diffCount = 0;
+    const discrepancies: any[] = [];
+
+    allIds.forEach(id => {
+      const inBank = bankMap.has(id);
+      const inInvoice = invoiceMap.has(id);
+
+      if (inBank && inInvoice) {
+        const bankAmt = bankMap.get(id)!;
+        const invAmt = invoiceMap.get(id)!;
+        if (bankAmt === invAmt) {
+          matched++;
+        } else {
+          diffCount++;
+          discrepancies.push({
+            id,
+            bankAmount: bankAmt,
+            invoiceAmount: invAmt,
+            difference: Math.abs(bankAmt - invAmt),
+            status: 'mismatch',
+            description: "Amount doesn't match"
+          });
+        }
+      } else if (inBank) {
+        diffCount++;
+        discrepancies.push({
+          id,
+          bankAmount: bankMap.get(id)!,
+          invoiceAmount: '-',
+          difference: '-',
+          status: 'missing_invoice',
+          description: 'Missing in Invoice'
+        });
+      } else if (inInvoice) {
+        diffCount++;
+        discrepancies.push({
+          id,
+          bankAmount: '-',
+          invoiceAmount: invoiceMap.get(id)!,
+          difference: '-',
+          status: 'missing_bank',
+          description: 'Missing in Bank'
+        });
+      }
+    });
+
+    const finalMatchRate = Math.min(100, total > 0 ? Math.round((matched / total) * 100) : 100);
+
+    // Call Groq Llama 3.1 AI auditor
+    const { generateReconciliationReport } = require('../services/aiService');
+    const aiReport = await generateReconciliationReport(userId, {
+      total,
+      matched,
+      differences: diffCount,
+      matchRate: finalMatchRate
+    }, discrepancies);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalCompared: total,
+        matchedCount: matched,
+        differenceCount: diffCount,
+        matchRate: finalMatchRate,
+        discrepancies,
+        aiReport
+      }
+    });
+
+  } catch (error) {
+    next(error);
+  }
+}

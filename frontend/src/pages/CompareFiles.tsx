@@ -3,6 +3,7 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import { toast } from '../components/ui/Toast';
+import { api } from '../services/api';
 import { 
   ArrowLeftRight, 
   RefreshCw, 
@@ -74,6 +75,7 @@ export const CompareFiles: React.FC = () => {
   const [matchRate, setMatchRate] = useState<number>(0);
   const [discrepancyList, setDiscrepancyList] = useState<Discrepancy[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [aiReport, setAiReport] = useState<string>('');
 
   const bankInputRef = useRef<HTMLInputElement>(null);
   const invoiceInputRef = useRef<HTMLInputElement>(null);
@@ -117,105 +119,39 @@ export const CompareFiles: React.FC = () => {
     }
   };
 
-  // Auto-helper mapping keys
-  const getFieldVal = (obj: any, keys: string[]) => {
-    for (const k of keys) {
-      const found = Object.keys(obj).find(x => x.toLowerCase().replace(/[^a-z0-9]/g, '') === k);
-      if (found) return obj[found];
-    }
-    return null;
-  };
-
   // Compare Files Logic
-  const handleCompare = () => {
+  const handleCompare = async () => {
     if (bankData.length === 0 || invoiceData.length === 0) {
       toast.error('Please upload both files or load the demo dataset first.');
       return;
     }
 
     setIsComparing(true);
-    
-    setTimeout(() => {
-      // Keys to look for identifiers
-      const idKeys = ['txid', 'transactionid', 'id', 'reference', 'utrref', 'utr', 'ref'];
-      const amountKeys = ['amount', 'amt', 'value', 'sum', 'price'];
-
-      const bankMap = new Map<string, number>();
-      bankData.forEach(row => {
-        const idVal = String(getFieldVal(row, idKeys) || '').trim();
-        const amtVal = parseFloat(String(getFieldVal(row, amountKeys) || '0').replace(/[^0-9.-]/g, ''));
-        if (idVal && !isNaN(amtVal)) {
-          bankMap.set(idVal, amtVal);
-        }
+    try {
+      const response = await api.post('/batches/compare', {
+        bankData,
+        invoiceData
       });
 
-      const invoiceMap = new Map<string, number>();
-      invoiceData.forEach(row => {
-        const idVal = String(getFieldVal(row, idKeys) || '').trim();
-        const amtVal = parseFloat(String(getFieldVal(row, amountKeys) || '0').replace(/[^0-9.-]/g, ''));
-        if (idVal && !isNaN(amtVal)) {
-          invoiceMap.set(idVal, amtVal);
-        }
-      });
-
-      const allIds = new Set([...bankMap.keys(), ...invoiceMap.keys()]);
-      let total = allIds.size;
-      let matched = 0;
-      let diffCount = 0;
-      const discrepancies: Discrepancy[] = [];
-
-      allIds.forEach(id => {
-        const inBank = bankMap.has(id);
-        const inInvoice = invoiceMap.has(id);
-
-        if (inBank && inInvoice) {
-          const bankAmt = bankMap.get(id)!;
-          const invAmt = invoiceMap.get(id)!;
-          if (bankAmt === invAmt) {
-            matched++;
-          } else {
-            diffCount++;
-            discrepancies.push({
-              id,
-              bankAmount: bankAmt,
-              invoiceAmount: invAmt,
-              difference: Math.abs(bankAmt - invAmt),
-              status: 'mismatch',
-              description: "Amount doesn't match"
-            });
-          }
-        } else if (inBank) {
-          diffCount++;
-          discrepancies.push({
-            id,
-            bankAmount: bankMap.get(id)!,
-            invoiceAmount: '-',
-            difference: '-',
-            status: 'missing_invoice',
-            description: 'Missing in Invoice'
-          });
-        } else if (inInvoice) {
-          diffCount++;
-          discrepancies.push({
-            id,
-            bankAmount: '-',
-            invoiceAmount: invoiceMap.get(id)!,
-            difference: '-',
-            status: 'missing_bank',
-            description: 'Missing in Bank'
-          });
-        }
-      });
-
-      setTotalCompared(total);
-      setMatchedCount(matched);
-      setDifferenceCount(diffCount);
-      setMatchRate(Math.round((matched / total) * 100));
-      setDiscrepancyList(discrepancies);
-      setHasCompared(true);
+      if (response.data.success) {
+        const { totalCompared, matchedCount, differenceCount, matchRate, discrepancies, aiReport } = response.data.data;
+        setTotalCompared(totalCompared);
+        setMatchedCount(matchedCount);
+        setDifferenceCount(differenceCount);
+        setMatchRate(matchRate);
+        setDiscrepancyList(discrepancies);
+        setAiReport(aiReport);
+        setHasCompared(true);
+        toast.success('Comparison completed successfully!');
+      } else {
+        toast.error(response.data.message || 'Comparison failed.');
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error('Comparison error. Check backend connection.');
+    } finally {
       setIsComparing(false);
-      toast.success('Comparison completed successfully!');
-    }, 800);
+    }
   };
 
   // Demo Dataset Loader (exactly matching user example)
@@ -413,6 +349,19 @@ export const CompareFiles: React.FC = () => {
               </div>
             </Card>
           </div>
+
+          {/* AI Report Card */}
+          {aiReport && (
+            <Card className="bg-slate-900 border-slate-850 p-6 text-left space-y-4 rounded-xl">
+              <h4 className="text-xs font-bold text-white tracking-wider uppercase flex items-center gap-1.5 font-outfit">
+                <Sparkles className="h-4 w-4 text-violet-400 animate-pulse" />
+                AI Reconciliation Audit Report
+              </h4>
+              <div className="bg-slate-950 border border-slate-850 p-6 rounded-xl text-xs text-slate-300 leading-relaxed whitespace-pre-line font-medium">
+                {aiReport}
+              </div>
+            </Card>
+          )}
 
           {/* Audit List Table */}
           <Card className="bg-slate-900 border-slate-850 p-6 space-y-4 text-left">

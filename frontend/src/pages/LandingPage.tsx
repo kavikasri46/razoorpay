@@ -5,16 +5,13 @@ import {
   Brain, 
   LineChart, 
   Cpu, 
-  Lock, 
-  Layers, 
   ArrowRight, 
   Play, 
-  Check, 
-  HelpCircle, 
-  Star,
-  Users
+  Check
 } from 'lucide-react';
 import Badge from '../components/ui/Badge';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
 
 export const LandingPage: React.FC = () => {
   const stats = [
@@ -142,7 +139,7 @@ export const LandingPage: React.FC = () => {
       <header className="max-w-7xl mx-auto px-6 py-16 md:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-left">
         <div className="space-y-6">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-violet-50 text-violet-600 rounded-full text-[10px] font-bold tracking-wide uppercase border border-violet-100">
-            <Badge variant="primary" className="py-0.5 px-1.5 bg-violet-600 text-white uppercase text-[8px]">New</Badge>
+            <Badge variant="info" className="py-0.5 px-1.5 bg-violet-600 text-white uppercase text-[8px]">New</Badge>
             AI-Powered Finance for a Smarter Future
           </span>
           
@@ -196,7 +193,7 @@ export const LandingPage: React.FC = () => {
                 <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Overview</span>
                 <h4 className="text-xs font-bold text-slate-900">Total Balance</h4>
               </div>
-              <Badge variant="primary" className="bg-emerald-50 text-emerald-600 border border-emerald-100 text-[10px]">
+              <Badge variant="success" className="bg-emerald-50 text-emerald-600 border border-emerald-100 text-[10px]">
                 + 12.5%
               </Badge>
             </div>
