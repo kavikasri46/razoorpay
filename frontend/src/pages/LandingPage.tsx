@@ -7,7 +7,15 @@ import {
   Cpu, 
   ArrowRight, 
   Play, 
-  Check
+  Check,
+  Fingerprint,
+  Activity,
+  GitBranch,
+  TrendingUp,
+  Sparkles,
+  Zap,
+  Lock,
+  Layers
 } from 'lucide-react';
 import Badge from '../components/ui/Badge';
 import Card from '../components/ui/Card';
@@ -263,8 +271,100 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* SECTION A: Audit & Integrity (Finova mockup style) */}
+      <section className="bg-white border-b border-slate-100 py-20 relative z-10 text-left">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-bold tracking-wide uppercase border border-indigo-100">
+              <Fingerprint className="h-3 w-3" /> Secure Verification System
+            </span>
+            <h3 className="text-3xl font-black text-slate-900 tracking-tight font-outfit leading-tight">
+              Audit trails with <br/>
+              <span className="text-indigo-600">Deterministic Integrity</span>
+            </h3>
+            <p className="text-slate-500 text-sm leading-relaxed font-medium">
+              Every financial record trace requires cryptographic ledger mapping, ensuring that bank logs and invoices are correlated exactly without room for discrepancies.
+            </p>
+            <div className="space-y-3 pt-2">
+              {[
+                { title: 'Zero-Trust Audit Logs', desc: 'Maintain complete platform records showing login times, upload batches, and system changes.', icon: Lock },
+                { title: 'AI-Powered Anomaly Alerts', desc: 'Identify velocities, duplicate references, and outsized transactions automatically.', icon: Sparkles }
+              ].map((item, idx) => (
+                <div key={idx} className="flex gap-3 items-start">
+                  <div className="h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100/50">
+                    <item.icon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-slate-900">{item.title}</h5>
+                    <p className="text-[11px] text-slate-450 mt-0.5 leading-relaxed font-medium">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="bg-slate-55 border border-slate-100 rounded-2xl p-6 lg:p-8 space-y-6 shadow-sm">
+            <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider font-outfit border-b border-slate-200/60 pb-3">Reconciliation Checklist</h4>
+            <div className="space-y-3.5">
+              {[
+                { check: 'Verification matches transaction reference format', ok: true },
+                { check: 'Isolate currency types (INR/USD/EUR/SGD)', ok: true },
+                { check: 'Inspect duplicate transaction references', ok: true },
+                { check: 'Flag negative transaction amounts', ok: true },
+                { check: 'Cross-link payments with Gateway settlements', ok: true }
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-center gap-3 text-xs font-medium text-slate-650">
+                  <div className="h-5.5 w-5.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                    <Check className="h-3 w-3" />
+                  </div>
+                  <span>{item.check}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION B: Sync & Gateways */}
+      <section className="max-w-7xl mx-auto px-6 py-20 relative z-10 text-left grid grid-cols-1 lg:grid-cols-2 gap-12 items-center border-b border-slate-100">
+        <div className="order-2 lg:order-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            { title: 'Razorpay API', desc: 'Automatic payout logs syncing', icon: Zap, color: 'text-blue-500', bg: 'bg-blue-50' },
+            { title: 'Direct Feeds', desc: 'Sync direct bank statements', icon: GitBranch, color: 'text-purple-500', bg: 'bg-purple-50' },
+            { title: 'Gateway Sync', desc: 'Link Stripe, PayPal, and more', icon: Activity, color: 'text-orange-500', bg: 'bg-orange-50' },
+            { title: 'Invoice Ledger', desc: 'Sync internal ERP records', icon: Layers, color: 'text-pink-500', bg: 'bg-pink-50' }
+          ].map((item, idx) => (
+            <Card key={idx} className="bg-white border-slate-100 p-5 rounded-2xl flex flex-col justify-between hover:shadow-md transition-all shadow-sm">
+              <div>
+                <div className={`h-9 w-9 rounded-lg ${item.bg} ${item.color} flex items-center justify-center mb-3`}>
+                  <item.icon className="h-4 w-4" />
+                </div>
+                <h5 className="text-xs font-bold text-slate-900 font-outfit">{item.title}</h5>
+                <p className="text-[10px] text-slate-455 mt-1 leading-normal font-medium">{item.desc}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+        <div className="order-1 lg:order-2 space-y-6">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-pink-50 text-pink-600 rounded-full text-[10px] font-bold tracking-wide uppercase border border-pink-100">
+            <Zap className="h-3 w-3" /> Multi-Gateway Support
+          </span>
+          <h3 className="text-3xl font-black text-slate-900 tracking-tight font-outfit leading-tight">
+            Connect systems with <br/>
+            <span className="text-pink-600">Zero Configuration</span>
+          </h3>
+          <p className="text-slate-500 text-sm leading-relaxed font-medium">
+            Forget custom script setups or manual imports. Simply upload your direct banking settlement feed, Stripe payments log, or standard invoice CSV, and let our mapping algorithms auto-link your data instantly.
+          </p>
+          <div className="pt-2">
+            <Link to="/register" className="inline-flex items-center gap-1.5 px-4.5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-md">
+              Start Syncing Ledger Data <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* How it Works Section */}
-      <section id="solutions" className="bg-white border-y border-slate-100 py-20 text-center space-y-16 relative z-10">
+      <section id="solutions" className="bg-white border-b border-slate-100 py-20 text-center space-y-16 relative z-10">
         <div className="max-w-7xl mx-auto px-6 space-y-16">
           <div className="space-y-3">
             <span className="text-xs font-bold uppercase tracking-widest text-violet-600">How It Works</span>
