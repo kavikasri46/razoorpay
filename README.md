@@ -1,4 +1,4 @@
-# LaserPay — Intelligent Payments. Smarter Decisions.
+# RazorPay — Intelligent Payments. Smarter Decisions.
 
 <p align="center">
   <img src="https://img.shields.io/badge/Stack-React%20%7C%20Node%20%7C%20PostgreSQL-06b6d4?style=flat-square" />
@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/License-MIT-f59e0b?style=flat-square" />
 </p>
 
-> A production-grade AI-powered personal finance platform built for the **LaserPay Hackathon**. LaserPay helps users track transactions, set smart budgets, detect anomalies, and get personalized financial advice through a conversational AI assistant.
+> A production-grade AI-powered personal finance platform built for the **RazorPay Hackathon**. RazorPay helps users track transactions, set smart budgets, detect anomalies, and get personalized financial advice through a conversational AI assistant.
 
 ---
 
@@ -64,63 +64,82 @@
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/your-username/laserpay.git
-cd laserpay
+git clone https://github.com/your-username/razorpay.git
+cd razorpay
 
-# Install root, server, and client dependencies
+# Install backend dependencies
+cd backend
 npm install
-npm install --prefix server
-npm install --prefix client
+
+# Install frontend dependencies
+cd ../frontend
+npm install
 ```
 
 ### 2. Configure Environment
 
 ```bash
-# Copy example env files
-cp .env.example .env
-cp server/.env.example server/.env
+# Set up backend env
+cp backend/.env.example backend/.env
+
+# Set up frontend env
+cp frontend/.env.example frontend/.env
 ```
 
-Edit `server/.env`:
+Edit `backend/.env`:
 
 ```env
-DATABASE_URL="postgresql://postgres:password@localhost:5432/laserpay?schema=public"
+DATABASE_URL="postgresql://postgres:password@localhost:5432/razorpay?schema=public"
 JWT_SECRET="your_super_secret_key_here"
 PORT=5000
 GROQ_API_KEY="gsk_..."   # Optional — falls back to rule-based AI if absent
 ```
 
+Edit `frontend/.env`:
+
+```env
+VITE_API_URL="http://localhost:5000/api"
+```
+
 ### 3. Set Up Database
 
 ```bash
-cd server
+cd backend
 npx prisma migrate dev --name init
 npx prisma db seed
-cd ..
 ```
 
 ### 4. Start Development Servers
 
+To run the application, start both services in separate terminal windows:
+
+**Start backend:**
 ```bash
-# At the project root — starts both client (port 5173) and server (port 5000)
+cd backend
 npm run dev
 ```
 
-Visit **http://localhost:5173** to open LaserPay.
+**Start frontend:**
+```bash
+cd frontend
+npm run dev
+```
+
+Visit **http://localhost:5173** to open RazorPay.
 
 **Seeded demo credentials:**
-- **Admin:** `admin@laserpay.io` / `Admin@123`
-- **User:** `john@example.com` / `User@123`
+- **Admin:** `admin@razorpay.com` / `admin123`
+- **User:** `rahul@razorpay.com` / `user123`
 
 ---
 
 ## 🐳 Docker Deployment
 
 ```bash
-# Build and launch all 3 services (client, server, postgres)
+# Build and launch all 3 services (frontend, backend, postgres)
 docker compose up --build -d
 
-# Run database migrations inside the server container
+# Run database migrations inside the backend container
 docker compose exec server npx prisma migrate deploy
 docker compose exec server npx prisma db seed
 ```
@@ -157,8 +176,8 @@ Users ──────────────►  │  Origin: S3 Static Buck
 
 1. **Frontend → S3 + CloudFront**
    ```bash
-   npm run build --prefix client
-   aws s3 sync client/dist s3://your-laserpay-bucket --delete
+   npm run build --prefix frontend
+   aws s3 sync frontend/dist s3://your-razorpay-bucket --delete
    aws cloudfront create-invalidation --distribution-id XXXXX --paths "/*"
    ```
 
@@ -166,9 +185,9 @@ Users ──────────────►  │  Origin: S3 Static Buck
    ```bash
    # Build and push Docker image to ECR
    aws ecr get-login-password | docker login --username AWS --password-stdin <ecr-uri>
-   docker build -t laserpay-server ./server
-   docker tag laserpay-server:latest <ecr-uri>/laserpay-server:latest
-   docker push <ecr-uri>/laserpay-server:latest
+   docker build -t razorpay-backend ./backend
+   docker tag razorpay-backend:latest <ecr-uri>/razorpay-backend:latest
+   docker push <ecr-uri>/razorpay-backend:latest
    # Then update your ECS service to use new image revision
    ```
 
@@ -182,8 +201,8 @@ Users ──────────────►  │  Origin: S3 Static Buck
 ## 📁 Project Structure
 
 ```
-laserpay/
-├── client/                    # React + Vite frontend
+razorpay/
+├── frontend/                  # React + Vite frontend
 │   ├── src/
 │   │   ├── components/ui/     # Shared design system components
 │   │   ├── context/           # Theme, Auth, Notification providers
@@ -194,7 +213,7 @@ laserpay/
 │   ├── Dockerfile
 │   └── nginx.conf
 │
-├── server/                    # Express + Prisma backend
+├── backend/                   # Express + Prisma backend
 │   ├── src/
 │   │   ├── config/            # DB + env config
 │   │   ├── controllers/       # Route handlers
@@ -276,6 +295,4 @@ laserpay/
 
 ## 📜 License
 
-MIT — Built for the LaserPay Hackathon 2026 🚀
-#   r a z o o r p a y  
- 
+MIT — Built for the RazorPay Hackathon 2026 🚀

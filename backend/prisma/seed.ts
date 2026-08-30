@@ -24,7 +24,7 @@ async function main() {
   const adminUser = await prisma.user.create({
     data: {
       name: 'Aditya Sharma',
-      email: 'admin@laserpay.com',
+      email: 'admin@razorpay.com',
       password: adminPassword,
       role: 'ADMIN',
       avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150',
@@ -34,7 +34,7 @@ async function main() {
   const regularUser = await prisma.user.create({
     data: {
       name: 'Rahul Verma',
-      email: 'rahul@laserpay.com',
+      email: 'rahul@razorpay.com',
       password: userPassword,
       role: 'USER',
       avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
@@ -62,7 +62,7 @@ async function main() {
       amount: 25000,
       type: 'INCOME',
       category: 'Freelance',
-      description: 'UI/UX Design Contract - LaserPay Landing Page',
+      description: 'UI/UX Design Contract - RazorPay Landing Page',
       paymentMethod: 'UPI',
       status: 'SUCCESS',
       riskLevel: 'LOW',
@@ -355,7 +355,7 @@ async function main() {
     },
     {
       title: 'System Welcome',
-      message: 'Welcome to LaserPay! Your intelligent payment analytics dashboard is ready.',
+      message: 'Welcome to RazorPay! Your intelligent payment analytics dashboard is ready.',
       type: 'SYSTEM',
       read: true,
     },

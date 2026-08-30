@@ -40,7 +40,7 @@ async function getUserFinancialContext(userId: string) {
 export async function generateChatResponse(userId: string, query: string): Promise<string> {
   const context = await getUserFinancialContext(userId);
 
-  const systemPrompt = `You are "LaserPay AI Assistant", a premium personal financial planner.
+  const systemPrompt = `You are "RazorPay AI Assistant", a premium personal financial planner.
 You have secure access to the user's recent transactions, budgets, and recurring expenses.
 Use the following context to answer the user's questions:
 
@@ -117,7 +117,7 @@ export async function analyzeSpending(userId: string) {
     explanation = 'Your financial health is stable. You have a solid savings rate, though optimization of discretionary categories like Shopping or Dining could improve it further.';
   }
 
-  const systemPrompt = `You are the "LaserPay AI Auditor".
+  const systemPrompt = `You are the "RazorPay AI Auditor".
 Analyze the user's financial profile:
 Income: ₹${context.totalIncome}
 Expenses: ₹${context.totalExpense}
@@ -194,7 +194,7 @@ function getMockAIResponse(query: string, context: any): string {
   const q = query.toLowerCase();
   
   if (q.includes('reduce') || q.includes('save') || q.includes('cut')) {
-    return `### **LaserPay AI Savings Analysis**
+    return `### **RazorPay AI Savings Analysis**
 
 Based on your actual financial data, here are the most effective ways to reduce expenses:
 
@@ -207,7 +207,7 @@ Based on your actual financial data, here are the most effective ways to reduce 
   }
 
   if (q.includes('spend') || q.includes('most') || q.includes('where')) {
-    return `### **LaserPay Spending Breakdown**
+    return `### **RazorPay Spending Breakdown**
 
 Analyzing your transactions, your highest expenditure categories are:
 
@@ -243,7 +243,7 @@ You are asking about a purchase of **₹${amountToBuy.toLocaleString('en-IN')}**
     }
   }
 
-  return `### **Welcome to LaserPay Smart Financial Assistant**
+  return `### **Welcome to RazorPay Smart Financial Assistant**
 
 I am ready to help you navigate your finances. Here are some of the actions you can ask me to perform:
 

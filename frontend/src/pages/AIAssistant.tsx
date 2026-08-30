@@ -18,7 +18,7 @@ export const AIAssistant: React.FC = () => {
     {
       id: 'welcome',
       sender: 'bot',
-      text: `### **Hello! I am your LaserPay AI Co-Pilot.**
+      text: `### **Hello! I am your RazorPay AI Co-Pilot.**
 
 I can inspect your real-time transactions, active category limits, and recurring bills to answer specific cashflow audits. Try clicking a quick chip below or type a query!`,
       timestamp: new Date(),

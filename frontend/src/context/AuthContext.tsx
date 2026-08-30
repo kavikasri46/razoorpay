@@ -29,8 +29,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Restore session
   useEffect(() => {
     const initAuth = async () => {
-      const storedToken = localStorage.getItem('laserpay_token');
-      const storedUser = localStorage.getItem('laserpay_user');
+      const storedToken = localStorage.getItem('razorpay_token');
+      const storedUser = localStorage.getItem('razorpay_user');
 
       if (storedToken && storedUser) {
         setToken(storedToken);
@@ -41,13 +41,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const res = await authApi.getMe();
           if (res.success && res.data.user) {
             setUser(res.data.user);
-            localStorage.setItem('laserpay_user', JSON.stringify(res.data.user));
+            localStorage.setItem('razorpay_user', JSON.stringify(res.data.user));
           }
         } catch (error) {
           console.error('Session restore verification failed:', error);
           // Token might be expired, clear it
-          localStorage.removeItem('laserpay_token');
-          localStorage.removeItem('laserpay_user');
+          localStorage.removeItem('razorpay_token');
+          localStorage.removeItem('razorpay_user');
           setToken(null);
           setUser(null);
         }
@@ -63,8 +63,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (res.success && res.data.token) {
       setToken(res.data.token);
       setUser(res.data.user);
-      localStorage.setItem('laserpay_token', res.data.token);
-      localStorage.setItem('laserpay_user', JSON.stringify(res.data.user));
+      localStorage.setItem('razorpay_token', res.data.token);
+      localStorage.setItem('razorpay_user', JSON.stringify(res.data.user));
     }
   };
 
@@ -73,23 +73,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (res.success && res.data.token) {
       setToken(res.data.token);
       setUser(res.data.user);
-      localStorage.setItem('laserpay_token', res.data.token);
-      localStorage.setItem('laserpay_user', JSON.stringify(res.data.user));
+      localStorage.setItem('razorpay_token', res.data.token);
+      localStorage.setItem('razorpay_user', JSON.stringify(res.data.user));
     }
   };
 
   const logout = () => {
     setToken(null);
     setUser(null);
-    localStorage.removeItem('laserpay_token');
-    localStorage.removeItem('laserpay_user');
+    localStorage.removeItem('razorpay_token');
+    localStorage.removeItem('razorpay_user');
   };
 
   const updateProfile = async (profileData: any) => {
     const res = await authApi.updateProfile(profileData);
     if (res.success && res.data.user) {
       setUser(res.data.user);
-      localStorage.setItem('laserpay_user', JSON.stringify(res.data.user));
+      localStorage.setItem('razorpay_user', JSON.stringify(res.data.user));
     }
   };
 

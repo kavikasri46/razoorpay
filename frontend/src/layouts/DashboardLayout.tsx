@@ -72,7 +72,7 @@ const DashboardLayout: React.FC = () => {
   const getPageTitle = () => {
     const allLinks = [...userNavigation, ...adminNavigation];
     const match = allLinks.find(link => link.href === location.pathname);
-    return match ? match.name : 'LaserPay';
+    return match ? match.name : 'RazorPay';
   };
 
   const handleLogout = () => {
@@ -90,7 +90,7 @@ const DashboardLayout: React.FC = () => {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-cyan-500">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
             </svg>
-            <span className="text-xl font-bold tracking-tight text-white">Laser<span className="text-cyan-500">Pay</span></span>
+            <span className="text-xl font-bold tracking-tight text-white">Razor<span className="text-cyan-500">Pay</span></span>
           </Link>
           <button className="md:hidden text-slate-400 hover:text-white" onClick={() => setSidebarOpen(false)}>
             <X className="h-5 w-5" />

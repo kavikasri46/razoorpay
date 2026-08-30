@@ -11,7 +11,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('laserpay_theme');
+    const savedTheme = localStorage.getItem('razorpay_theme');
     if (savedTheme === 'light' || savedTheme === 'dark') {
       return savedTheme;
     }
@@ -27,7 +27,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       root.classList.remove('dark');
       root.style.colorScheme = 'light';
     }
-    localStorage.setItem('laserpay_theme', theme);
+    localStorage.setItem('razorpay_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {

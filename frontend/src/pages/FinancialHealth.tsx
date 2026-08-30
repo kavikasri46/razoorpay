@@ -79,7 +79,7 @@ export const FinancialHealth: React.FC = () => {
             <div className="absolute inset-0 rounded-full border-4 border-cyan-500/20 border-t-cyan-500 animate-spin duration-[4s]" />
             <span className="text-4xl font-extrabold text-white">{score}<span className="text-xs text-slate-500 font-normal">/100</span></span>
           </div>
-          <h3 className="text-sm font-bold text-white tracking-wide uppercase mb-1">LaserPay Health Score</h3>
+          <h3 className="text-sm font-bold text-white tracking-wide uppercase mb-1">RazorPay Health Score</h3>
           <Badge variant={
             rating === 'Excellent' || rating === 'Good' ? 'success' :
             rating === 'Fair' ? 'warning' : 'danger'

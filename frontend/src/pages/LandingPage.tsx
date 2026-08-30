@@ -22,14 +22,14 @@ export const LandingPage: React.FC = () => {
       {/* Hero Section */}
       <header className="max-w-4xl mx-auto text-center px-6 py-20 md:py-28 flex flex-col items-center">
         <span className="px-3 py-1 bg-cyan-500/10 text-cyan-400 rounded-full text-xs font-semibold tracking-wider uppercase mb-6 border border-cyan-500/10">
-          LaserPay Hackathon Edition
+          RazorPay Hackathon Edition
         </span>
         <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
           Intelligent Payments.<br/>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Smarter Decisions.</span>
         </h1>
         <p className="mt-6 text-base md:text-lg text-slate-400 max-w-2xl leading-relaxed">
-          LaserPay combines payment intelligence, real-time analytics, and AI-powered financial insights into one unified, enterprise-ready dashboard. Connect, audit, and optimize your cash flow in real-time.
+          RazorPay combines payment intelligence, real-time analytics, and AI-powered financial insights into one unified, enterprise-ready dashboard. Connect, audit, and optimize your cash flow in real-time.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center w-full max-w-sm">
           <Link to="/register" className="flex-1 px-6 py-3.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg text-sm transition-all shadow-xl shadow-cyan-500/10 text-center">
@@ -106,7 +106,7 @@ export const LandingPage: React.FC = () => {
         <Link to="/register" className="px-8 py-3.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg text-sm transition-all shadow-xl shadow-cyan-500/10">
           Get Started
         </Link>
-        <p className="text-[10px] text-slate-600 mt-16">&copy; {new Date().getFullYear()} LaserPay Platform. Designed for the LaserPay Hackathon.</p>
+        <p className="text-[10px] text-slate-600 mt-16">&copy; {new Date().getFullYear()} RazorPay Platform. Designed for the RazorPay Hackathon.</p>
       </footer>
     </div>
   );

@@ -52,7 +52,7 @@ export const LoginPage: React.FC = () => {
       <Input
         label="Email Address"
         type="email"
-        placeholder="rahul@laserpay.com"
+        placeholder="rahul@razorpay.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
@@ -83,10 +83,10 @@ export const LoginPage: React.FC = () => {
         <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Demo Credentials</p>
         <div className="space-y-1">
           <p className="text-xs text-slate-400">
-            <span className="font-semibold text-slate-300">User:</span> rahul@laserpay.com / <span className="font-mono text-slate-200">user123</span>
+            <span className="font-semibold text-slate-300">User:</span> rahul@razorpay.com / <span className="font-mono text-slate-200">user123</span>
           </p>
           <p className="text-xs text-slate-400">
-            <span className="font-semibold text-slate-300">Admin:</span> admin@laserpay.com / <span className="font-mono text-slate-200">admin123</span>
+            <span className="font-semibold text-slate-300">Admin:</span> admin@razorpay.com / <span className="font-mono text-slate-200">admin123</span>
           </p>
         </div>
       </div>

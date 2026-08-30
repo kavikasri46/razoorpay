@@ -26,7 +26,7 @@ export const RegisterPage: React.FC = () => {
       setError('');
       setLoading(true);
       await register({ name, email, password, role });
-      toast.success('Registration successful! Welcome to LaserPay.');
+      toast.success('Registration successful! Welcome to RazorPay.');
       navigate('/dashboard');
     } catch (err: any) {
       console.error(err);
@@ -63,7 +63,7 @@ export const RegisterPage: React.FC = () => {
       <Input
         label="Email Address"
         type="email"
-        placeholder="rahul@laserpay.com"
+        placeholder="rahul@razorpay.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required

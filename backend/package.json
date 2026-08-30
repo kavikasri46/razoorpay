@@ -1,7 +1,7 @@
 {
-  "name": "laserpay-server",
+  "name": "razorpay-backend",
   "version": "1.0.0",
-  "description": "LaserPay Backend Express Server",
+  "description": "RazorPay Backend Express Server",
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon src/server.ts",

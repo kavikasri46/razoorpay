@@ -27,7 +27,7 @@ app.use(errorHandler);
 // Start Server
 app.listen(ENV.PORT, () => {
   console.log(`=========================================`);
-  console.log(`  LaserPay Server is running on port ${ENV.PORT} `);
+  console.log(`  RazorPay Server is running on port ${ENV.PORT} `);
   console.log(`  URL: http://localhost:${ENV.PORT}              `);
   console.log(`  Client URL: ${ENV.CLIENT_URL}          `);
   console.log(`  Database URL configured.                `);
