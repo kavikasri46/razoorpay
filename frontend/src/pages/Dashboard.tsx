@@ -8,10 +8,6 @@ import {
   Upload,
   Download,
   AlertCircle,
-  CheckCircle,
-  FileText,
-  Clock,
-  Cpu,
   Brain,
   Sparkles,
   RefreshCw
@@ -48,8 +44,7 @@ export const Dashboard: React.FC = () => {
   const [selectedTx, setSelectedTx] = useState<ExceptionItem | null>(null);
   const [reviewQueue, setReviewQueue] = useState<ReviewQueueItem[]>([
     { id: 'TX034', issue: 'Missing Invoice', amount: '₹12,000', priority: 'HIGH' },
-    { id: 'TX052', issue: 'Amount Mismatch', amount: '₹8,500', priority: 'MEDIUM' },
-    { id: 'TX071', issue: 'Duplicate Record', amount: '₹4,000', priority: 'HIGH' }
+    { id: 'TX052', issue: 'Amount Mismatch', amount: '₹8,500', priority: 'MEDIUM' }
   ]);
 
   // Reconciliation statistics
@@ -62,10 +57,10 @@ export const Dashboard: React.FC = () => {
 
   // Trends for Match Rate
   const trendData = [
-    { name: 'Run 1', rate: 78 },
-    { name: 'Run 2', rate: 82 },
-    { name: 'Run 3', rate: 85 },
-    { name: 'Run 4', rate: 87 }
+    { name: 'R1', rate: 78 },
+    { name: 'R2', rate: 82 },
+    { name: 'R3', rate: 85 },
+    { name: 'R4', rate: 87 }
   ];
 
   // Exceptions list
@@ -81,7 +76,7 @@ export const Dashboard: React.FC = () => {
     setTimeout(() => {
       setIsRunning(false);
       toast.success('Reconciliation completed! 100 records audited, 87% match accuracy.');
-    }, 1500);
+    }, 1200);
   };
 
   const handleExportReport = () => {
@@ -90,519 +85,389 @@ export const Dashboard: React.FC = () => {
 
   const handleMarkReviewed = (id: string) => {
     setReviewQueue(reviewQueue.filter(item => item.id !== id));
-    toast.success(`Transaction ${id} marked as reviewed and settled.`);
+    toast.success(`Transaction ${id} marked as reviewed.`);
   };
 
   return (
-    <div className="space-y-8 text-left font-sans">
-      {/* Header Panel */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white border border-slate-100 p-6 rounded-3xl shadow-sm">
-        <div>
-          <span className="text-[9px] uppercase tracking-widest text-slate-400 font-extrabold block">AI Finance Controller</span>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight font-outfit mt-1">
-            AI-Powered Financial Reconciliation
+    <div className="flex flex-col space-y-4 font-sans text-slate-800 antialiased max-h-[calc(100vh-6rem)] overflow-hidden text-xs">
+      
+      {/* Compact Header Panel */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white border border-slate-100 p-4 rounded-2xl shadow-sm gap-3 shrink-0">
+        <div className="text-left">
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] uppercase tracking-widest text-slate-400 font-extrabold">AI Finance Controller</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[9px] text-slate-400 font-semibold">Last Run: 30 Aug 2026, 03:42 PM</span>
+          </div>
+          <h2 className="text-lg font-black text-slate-900 tracking-tight font-outfit mt-0.5">
+            Financial Reconciliation Overview
           </h2>
-          <p className="text-[10px] text-slate-400 font-semibold mt-1 flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 inline-block animate-ping" />
-            Last Run: 30 Aug 2026, 03:42 PM
-          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Link to="/data-center" className="flex items-center gap-1.5 px-4.5 py-2.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all shadow-sm">
-            <Upload className="h-4 w-4 text-slate-400" /> Upload Data
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <Link to="/data-center" className="flex items-center justify-center gap-1.5 px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-750 rounded-lg font-bold transition-all text-[11px] shadow-sm flex-1 sm:flex-initial">
+            <Upload className="h-3.5 w-3.5 text-slate-400" /> Upload
           </Link>
           <Button 
             onClick={handleRunReconciliation}
             loading={isRunning}
-            className="bg-teal-600 hover:bg-teal-750 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 py-2.5"
+            className="bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 py-1.5 text-[11px] flex-1 sm:flex-initial"
           >
-            <RefreshCw className={`h-4 w-4 ${isRunning ? 'animate-spin' : ''}`} /> Run Reconciliation
+            <RefreshCw className={`h-3.5 w-3.5 ${isRunning ? 'animate-spin' : ''}`} /> Run Match
           </Button>
           <Button 
             onClick={handleExportReport}
-            className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 py-2.5 border-0"
+            className="bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 py-1.5 border-0 text-[11px] flex-1 sm:flex-initial"
           >
-            <Download className="h-4 w-4" /> Export Report
+            <Download className="h-3.5 w-3.5" /> Export
           </Button>
         </div>
       </div>
 
-      {/* Main KPI Cards Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-        {[
-          { title: 'Total Records', value: totalRecords, desc: 'Processed entries' },
-          { title: 'Matched', value: matchedCount, desc: '87.0% success rate' },
-          { title: 'Exceptions', value: exceptionCount, desc: '13.0% audit failures' },
-          { title: 'Match Rate', value: `${matchRate}.0%`, desc: 'Target rate: 95.0%' },
-          { title: 'Unresolved', value: unresolvedCount, desc: 'Review required', danger: true },
-          { title: 'Total Value', value: totalValue, desc: 'Net balance audited' }
-        ].map((kpi, idx) => (
-          <Card key={idx} className="bg-white border-slate-100 p-5 rounded-2xl shadow-sm text-left flex flex-col justify-between">
-            <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider block">{kpi.title}</span>
-            <div className="my-3">
-              <h3 className={`text-2xl font-black font-outfit ${kpi.danger ? 'text-rose-600' : 'text-slate-800'}`}>{kpi.value}</h3>
-            </div>
-            <span className="text-[10px] text-slate-450 font-semibold block">{kpi.desc}</span>
-          </Card>
-        ))}
-      </div>
-
-      {/* 2-Column Details Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* 3-Column Compact Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 flex-1 overflow-hidden">
         
-        {/* Left Side: Reconciliation Status Bars */}
-        <Card className="bg-white border-slate-100 p-6 rounded-3xl shadow-sm space-y-6">
-          <div>
-            <h4 className="text-xs font-black text-slate-850 uppercase tracking-widest font-outfit">Reconciliation Status</h4>
-            <p className="text-[10px] text-slate-400 mt-0.5">Distribution count across 100 total audited records</p>
-          </div>
-
-          <div className="space-y-4">
+        {/* ================= COLUMN 1 ================= */}
+        <div className="space-y-4 flex flex-col overflow-hidden">
+          {/* KPI 3x2 Grid */}
+          <div className="grid grid-cols-3 gap-2.5 shrink-0">
             {[
-              { label: 'Matched', count: 87, pct: 87, color: 'bg-emerald-500', text: 'text-emerald-600', bg: 'bg-emerald-50' },
-              { label: 'Mismatched', count: 8, pct: 8, color: 'bg-rose-500', text: 'text-rose-600', bg: 'bg-rose-50' },
-              { label: 'Missing', count: 3, pct: 3, color: 'bg-amber-500', text: 'text-amber-600', bg: 'bg-amber-50' },
-              { label: 'Duplicate', count: 1, pct: 1, color: 'bg-orange-500', text: 'text-orange-600', bg: 'bg-orange-50' },
-              { label: 'Unresolved', count: 1, pct: 1, color: 'bg-slate-400', text: 'text-slate-500', bg: 'bg-slate-50' }
-            ].map((stat, idx) => (
-              <div key={idx} className="space-y-1 text-left">
-                <div className="flex justify-between items-baseline text-xs font-semibold">
-                  <span className="text-slate-700 flex items-center gap-1.5">
-                    <span className={`h-2.5 w-2.5 rounded-full ${stat.color} inline-block`} />
-                    {stat.label}
-                  </span>
-                  <span className="text-slate-500">{stat.count} records ({stat.pct}%)</span>
-                </div>
-                <div className="w-full bg-slate-50 h-2 rounded-full overflow-hidden border border-slate-100/50">
-                  <div className={`h-full ${stat.color}`} style={{ width: `${stat.pct}%` }} />
-                </div>
+              { title: 'Total Records', value: totalRecords, desc: 'Processed' },
+              { title: 'Matched', value: matchedCount, desc: '87.0% success' },
+              { title: 'Exceptions', value: exceptionCount, desc: '13.0% failures' },
+              { title: 'Match Rate', value: `${matchRate}.0%`, desc: 'Target 95.0%' },
+              { title: 'Unresolved', value: unresolvedCount, desc: 'Review required', danger: true },
+              { title: 'Total Value', value: totalValue, desc: 'Audited' }
+            ].map((kpi, idx) => (
+              <div key={idx} className="bg-white border border-slate-100 p-2.5 rounded-xl text-left flex flex-col justify-between shadow-sm">
+                <span className="text-[8px] uppercase font-bold text-slate-400 tracking-wider block">{kpi.title}</span>
+                <h3 className={`text-sm font-black font-outfit mt-1 ${kpi.danger ? 'text-rose-600' : 'text-slate-800'}`}>{kpi.value}</h3>
+                <span className="text-[8px] text-slate-400 mt-1 block truncate leading-none">{kpi.desc}</span>
               </div>
             ))}
           </div>
-        </Card>
 
-        {/* Right Side: Multi-Source Summaries */}
-        <Card className="bg-white border-slate-100 p-6 rounded-3xl shadow-sm space-y-6">
-          <div>
-            <h4 className="text-xs font-black text-slate-850 uppercase tracking-widest font-outfit">Multi-Source Summary</h4>
-            <p className="text-[10px] text-slate-400 mt-0.5">Integrations links and feeds processed during reconciliation</p>
-          </div>
-
-          <div className="space-y-4">
-            {[
-              { name: 'Bank Transactions Feed', records: '100 Records', val: '₹12,45,000', status: 'Processed ✅' },
-              { name: 'Invoice Ledger Source', records: '98 Records', val: '₹12,20,000', status: 'Processed ✅' },
-              { name: 'Payment Gateway Link', records: '100 Records', val: '₹12,40,000', status: 'Processed ✅' }
-            ].map((src, idx) => (
-              <div key={idx} className="bg-slate-50/50 border border-slate-100 p-4 rounded-2xl flex justify-between items-center">
-                <div className="space-y-1.5 text-left">
-                  <h5 className="text-xs font-bold text-slate-800 flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-teal-500" />
-                    {src.name}
-                  </h5>
-                  <div className="flex gap-4 text-[10px] text-slate-400 font-semibold">
-                    <span>{src.records}</span>
-                    <span>•</span>
-                    <span className="text-slate-500 font-bold">{src.val}</span>
+          {/* Reconciliation Status Progress */}
+          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col justify-between shrink-0">
+            <div className="border-b border-slate-100 pb-1.5 mb-2">
+              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest font-outfit">Audit Reconciliation Status</h4>
+            </div>
+            <div className="space-y-2.5">
+              {[
+                { label: 'Matched', count: 87, pct: 87, color: 'bg-emerald-500' },
+                { label: 'Mismatched', count: 8, pct: 8, color: 'bg-rose-500' },
+                { label: 'Missing', count: 3, pct: 3, color: 'bg-amber-500' },
+                { label: 'Duplicate', count: 1, pct: 1, color: 'bg-orange-500' },
+                { label: 'Unresolved', count: 1, pct: 1, color: 'bg-slate-400' }
+              ].map((stat, idx) => (
+                <div key={idx} className="space-y-1">
+                  <div className="flex justify-between items-baseline text-[9px] font-bold">
+                    <span className="text-slate-650 flex items-center gap-1.5">
+                      <span className={`h-2 w-2 rounded-full ${stat.color} inline-block`} />
+                      {stat.label}
+                    </span>
+                    <span className="text-slate-400">{stat.count} items ({stat.pct}%)</span>
+                  </div>
+                  <div className="w-full bg-slate-50 h-1.5 rounded-full overflow-hidden border border-slate-100/50">
+                    <div className={`h-full ${stat.color}`} style={{ width: `${stat.pct}%` }} />
                   </div>
                 </div>
-                <Badge variant="success" className="bg-emerald-50 text-emerald-600 border border-emerald-100 text-[10px] py-1 px-2.5">
-                  Processed
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-      </div>
-
-      {/* Match Rate (Accuracy Comparison) & Financial Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        {/* Left Side: Reconciliation Accuracy */}
-        <Card className="bg-white border-slate-100 p-6 rounded-3xl shadow-sm grid grid-cols-2 gap-6 items-center">
-          <div className="flex flex-col items-center justify-center border-r border-slate-100 py-4">
-            <div className="relative h-28 w-28 flex items-center justify-center">
-              <svg className="absolute inset-0 transform -rotate-90 w-full h-full" viewBox="0 0 36 36">
-                <path className="text-slate-100" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path className="text-teal-500" strokeWidth="3" strokeDasharray="87, 100" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              </svg>
-              <div className="text-center">
-                <span className="text-2xl font-black text-slate-800 block font-outfit">87%</span>
-                <span className="text-[8px] uppercase tracking-wider text-slate-400 font-bold block mt-0.5">Match Rate</span>
-              </div>
-            </div>
-            <p className="text-[10px] text-slate-400 font-semibold mt-3 text-center">87 / 100 records reconciled<br/>Target: 95.0%</p>
-          </div>
-
-          <div className="space-y-4 text-left">
-            <h5 className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Historical Accuracy</h5>
-            <div className="flex gap-8 items-center py-2">
-              <div>
-                <span className="text-slate-400 text-[10px] font-bold block">Previous Run</span>
-                <span className="text-xl font-black text-slate-700 font-outfit mt-0.5">82%</span>
-              </div>
-              <div className="h-8 w-px bg-slate-100" />
-              <div>
-                <span className="text-slate-400 text-[10px] font-bold block">Current Run</span>
-                <span className="text-xl font-black text-teal-650 font-outfit mt-0.5">87%</span>
-              </div>
-            </div>
-            <Badge variant="success" className="bg-emerald-50 text-emerald-600 border border-emerald-100 text-[9px] py-0.5 px-1.5 uppercase font-bold">
-              +5% improvement
-            </Badge>
-          </div>
-        </Card>
-
-        {/* Right Side: Financial Summary */}
-        <Card className="bg-white border-slate-100 p-6 rounded-3xl shadow-sm space-y-6">
-          <div>
-            <h4 className="text-xs font-black text-slate-850 uppercase tracking-widest font-outfit">Financial Summary</h4>
-            <p className="text-[10px] text-slate-400 mt-0.5">Value mapping of reconciled cash volumes</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { title: 'Total Transaction Value', val: '₹12,45,000', color: 'text-slate-800' },
-              { title: 'Successfully Reconciled', val: '₹10,85,000', color: 'text-emerald-600' },
-              { title: 'Exception Value', val: '₹1,60,000', color: 'text-rose-600' },
-              { title: 'Unresolved Value', val: '₹42,500', color: 'text-amber-600' }
-            ].map((item, idx) => (
-              <div key={idx} className="bg-slate-50/50 border border-slate-100 p-4.5 rounded-2xl text-left">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">{item.title}</span>
-                <span className={`text-lg font-black font-outfit block mt-1.5 ${item.color}`}>{item.val}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-      </div>
-
-      {/* Exception Summary & Processing Performance */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        {/* Left Side: Exception Summary Table */}
-        <Card className="bg-white border-slate-100 p-6 rounded-3xl shadow-sm space-y-4">
-          <div>
-            <h4 className="text-xs font-black text-slate-850 uppercase tracking-widest font-outfit">Exception Summary</h4>
-            <p className="text-[10px] text-slate-400 mt-0.5">Detailed categorisation of audit exception logs</p>
-          </div>
-
-          <div className="overflow-hidden border border-slate-100 rounded-2xl">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold">
-                  <th className="py-2.5 px-4">Exception Type</th>
-                  <th className="py-2.5 px-4 text-right">Count</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50 font-semibold text-slate-700">
-                {[
-                  { type: 'Amount Mismatch', count: 5 },
-                  { type: 'Date Mismatch', count: 1 },
-                  { type: 'Missing Record', count: 3 },
-                  { type: 'Duplicate', count: 1 },
-                  { type: 'Unresolved exceptions', count: 3 }
-                ].map((row, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50/30">
-                    <td className="py-2.5 px-4">{row.type}</td>
-                    <td className="py-2.5 px-4 text-right text-slate-900 font-bold">{row.count}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-
-        {/* Right Side: Processing Performance */}
-        <Card className="bg-white border-slate-100 p-6 rounded-3xl shadow-sm space-y-4">
-          <div>
-            <h4 className="text-xs font-black text-slate-850 uppercase tracking-widest font-outfit">Processing Performance</h4>
-            <p className="text-[10px] text-slate-400 mt-0.5">Platform throughput and engine matching speed metrics</p>
-          </div>
-
-          <div className="divide-y divide-slate-50">
-            {[
-              { label: 'Records Processed', value: '100', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-50' },
-              { label: 'Processing Time', value: '4.8 seconds', icon: Clock, color: 'text-indigo-500', bg: 'bg-indigo-50' },
-              { label: 'Records / Second', value: '20.8 items/sec', icon: Cpu, color: 'text-purple-500', bg: 'bg-purple-50' },
-              { label: 'Successful Matches', value: '87 perfect maps', icon: CheckCircle, color: 'text-emerald-500', bg: 'bg-emerald-50' }
-            ].map((perf, idx) => (
-              <div key={idx} className="py-3.5 flex justify-between items-center hover:bg-slate-50/50 px-2 rounded-xl transition-all">
-                <div className="flex gap-3 items-center">
-                  <div className={`h-8 w-8 rounded-lg ${perf.bg} ${perf.color} flex items-center justify-center shrink-0 border border-slate-100/50`}>
-                    <perf.icon className="h-4.5 w-4.5" />
-                  </div>
-                  <span className="text-xs font-bold text-slate-700">{perf.label}</span>
-                </div>
-                <span className="text-xs font-black text-slate-800 font-outfit">{perf.value}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-      </div>
-
-      {/* Recent Exceptions (Difference Viewer) */}
-      <Card className="bg-white border-slate-100 p-6 rounded-3xl shadow-sm space-y-4">
-        <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-          <div>
-            <h4 className="text-xs font-black text-slate-850 uppercase tracking-widest font-outfit">Recent Exceptions</h4>
-            <p className="text-[10px] text-slate-400 mt-0.5">Click any entry to view individual difference audit details</p>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto border border-slate-100 rounded-2xl">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold">
-                <th className="py-3 px-4">Transaction ID</th>
-                <th className="py-3 px-4">Customer</th>
-                <th className="py-3 px-4">Bank Record</th>
-                <th className="py-3 px-4">Invoice Record</th>
-                <th className="py-3 px-4">Difference</th>
-                <th className="py-3 px-4 text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50 font-semibold text-slate-700">
-              {exceptions.map((tx) => (
-                <tr key={tx.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="py-3 px-4 font-bold text-slate-900">{tx.id}</td>
-                  <td className="py-3 px-4">{tx.customer}</td>
-                  <td className="py-3 px-4">{tx.bankAmount}</td>
-                  <td className="py-3 px-4">{tx.invoiceAmount}</td>
-                  <td className="py-3 px-4 text-rose-600 font-bold">{tx.difference}</td>
-                  <td className="py-3 px-4 text-center">
-                    <button 
-                      onClick={() => {
-                        setSelectedTx(tx);
-                        toast.info(`Opening reconciliation auditor panel for ${tx.id}`);
-                      }}
-                      className="px-3 py-1 bg-violet-50 hover:bg-violet-100 text-violet-650 font-bold rounded-lg transition-colors text-[10px] border border-violet-100"
-                    >
-                      View Details
-                    </button>
-                  </td>
-                </tr>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </Card>
+
+          {/* Data Sources processed */}
+          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col justify-between flex-1 overflow-y-auto">
+            <div className="border-b border-slate-100 pb-1.5 mb-2 shrink-0">
+              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest font-outfit">Active Ledger Sources</h4>
+            </div>
+            <div className="space-y-2">
+              {[
+                { name: 'Bank Transactions Feed', records: '100 Records', val: '₹12,45,000' },
+                { name: 'Invoice Ledger Source', records: '98 Records', val: '₹12,20,000' },
+                { name: 'Payment Gateway Link', records: '100 Records', val: '₹12,40,000' }
+              ].map((src, idx) => (
+                <div key={idx} className="bg-slate-50/50 border border-slate-100 p-2.5 rounded-xl flex justify-between items-center">
+                  <div className="space-y-1 text-left">
+                    <h5 className="text-[10px] font-bold text-slate-800 flex items-center gap-1.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />
+                      {src.name}
+                    </h5>
+                    <div className="flex gap-2 text-[8px] text-slate-400 font-bold">
+                      <span>{src.records}</span>
+                      <span>•</span>
+                      <span className="text-slate-500">{src.val}</span>
+                    </div>
+                  </div>
+                  <span className="text-[8px] uppercase tracking-wider text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded font-extrabold">Active</span>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
-      </Card>
+
+        {/* ================= COLUMN 2 ================= */}
+        <div className="space-y-4 flex flex-col overflow-hidden">
+          {/* Accuracy & Value Summary combined */}
+          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex gap-4 shrink-0 items-center">
+            <div className="flex flex-col items-center justify-center border-r border-slate-100 pr-4 shrink-0">
+              <div className="relative h-20 w-20 flex items-center justify-center">
+                <svg className="absolute inset-0 transform -rotate-90 w-full h-full" viewBox="0 0 36 36">
+                  <path className="text-slate-100" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path className="text-teal-500" strokeWidth="3" strokeDasharray="87, 100" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div className="text-center">
+                  <span className="text-base font-black text-slate-800 block font-outfit">87%</span>
+                  <span className="text-[7px] uppercase tracking-wider text-slate-400 font-bold block">Accuracy</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 flex-1">
+              {[
+                { title: 'Reconciled Value', val: '₹10.85 L', color: 'text-emerald-600' },
+                { title: 'Exception Value', val: '₹1.60 L', color: 'text-rose-600' }
+              ].map((item, idx) => (
+                <div key={idx} className="bg-slate-50/50 border border-slate-100 p-2 rounded-xl">
+                  <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400 block truncate">{item.title}</span>
+                  <span className={`text-xs font-black font-outfit mt-0.5 block ${item.color}`}>{item.val}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Exceptions Table */}
+          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col overflow-hidden flex-1">
+            <div className="border-b border-slate-100 pb-1.5 mb-2 shrink-0">
+              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest font-outfit">Exceptions Summary Table</h4>
+            </div>
+
+            <div className="overflow-y-auto flex-1 border border-slate-100 rounded-xl">
+              <table className="w-full text-left text-[10px] border-collapse">
+                <thead>
+                  <tr className="bg-slate-55 border-b border-slate-100 text-slate-500 font-bold">
+                    <th className="py-2 px-3">Exception Type</th>
+                    <th className="py-2 px-3 text-right">Count</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50 font-semibold text-slate-700">
+                  {[
+                    { type: 'Amount Mismatch', count: 5 },
+                    { type: 'Date Mismatch', count: 1 },
+                    { type: 'Missing Record', count: 3 },
+                    { type: 'Duplicate Record', count: 1 },
+                    { type: 'Unresolved Feed Entries', count: 3 }
+                  ].map((row, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50/30">
+                      <td className="py-2 px-3">{row.type}</td>
+                      <td className="py-2 px-3 text-right text-slate-900 font-bold">{row.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+
+          {/* Difference Viewer */}
+          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col overflow-hidden flex-1">
+            <div className="border-b border-slate-100 pb-1.5 mb-2 shrink-0">
+              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest font-outfit">Recent Exception Differences</h4>
+            </div>
+
+            <div className="overflow-y-auto flex-1 border border-slate-100 rounded-xl">
+              <table className="w-full text-left text-[10px] border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold">
+                    <th className="py-2 px-3">ID</th>
+                    <th className="py-2 px-3">Bank</th>
+                    <th className="py-2 px-3">Invoice</th>
+                    <th className="py-2 px-3">Diff</th>
+                    <th className="py-2 px-3 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50 font-semibold text-slate-700">
+                  {exceptions.map((tx) => (
+                    <tr key={tx.id} className="hover:bg-slate-50/50">
+                      <td className="py-2 px-3 font-bold text-slate-900">{tx.id}</td>
+                      <td className="py-2 px-3">{tx.bankAmount}</td>
+                      <td className="py-2 px-3">{tx.invoiceAmount}</td>
+                      <td className="py-2 px-3 text-rose-600 font-bold">{tx.difference}</td>
+                      <td className="py-2 px-3 text-center">
+                        <button 
+                          onClick={() => setSelectedTx(tx)}
+                          className="px-2 py-0.5 bg-violet-50 hover:bg-violet-100 text-violet-650 font-bold rounded-md transition-colors text-[9px] border border-violet-100"
+                        >
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+
+        {/* ================= COLUMN 3 ================= */}
+        <div className="space-y-4 flex flex-col overflow-hidden">
+          {/* AI Insights (Forensic summaries) */}
+          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col shrink-0">
+            <div className="flex items-center gap-1 border-b border-slate-100 pb-1.5 mb-2 shrink-0">
+              <Brain className="h-4 w-4 text-violet-500" />
+              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-wider font-outfit">🤖 AI Reconciliation Insights</h4>
+            </div>
+            <ul className="space-y-1.5 text-[9px] font-bold text-slate-650">
+              {[
+                '87% of records reconciled successfully.',
+                'Discrepancies predominantly driven by amount differences.',
+                '3 missing invoices isolated from the ledger source.',
+                '₹42,500 requires human review queue actions.'
+              ].map((insightStr, idx) => (
+                <li key={idx} className="flex gap-1.5 items-start">
+                  <span className="text-violet-500">•</span>
+                  <span className="leading-tight">{insightStr}</span>
+                </li>
+              ))}
+            </ul>
+          </Card>
+
+          {/* Human Review Queue */}
+          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col overflow-hidden flex-1">
+            <div className="border-b border-slate-100 pb-1.5 mb-2 shrink-0">
+              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest font-outfit">Human Review Queue</h4>
+            </div>
+
+            <div className="overflow-y-auto flex-1 border border-slate-100 rounded-xl">
+              {reviewQueue.length === 0 ? (
+                <div className="text-center py-6 text-slate-400 font-bold text-[10px]">
+                  🎉 All exceptions reviewed and settled!
+                </div>
+              ) : (
+                <table className="w-full text-left text-[10px] border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold">
+                      <th className="py-2 px-3">ID</th>
+                      <th className="py-2 px-3">Issue</th>
+                      <th className="py-2 px-3">Priority</th>
+                      <th className="py-2 px-3 text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50 font-semibold text-slate-700">
+                    {reviewQueue.map((item) => (
+                      <tr key={item.id} className="hover:bg-slate-50/50">
+                        <td className="py-2 px-3 font-bold text-slate-900">{item.id}</td>
+                        <td className="py-2 px-3 truncate max-w-[80px]">{item.issue}</td>
+                        <td className="py-2 px-3">
+                          <Badge variant={item.priority === 'HIGH' ? 'danger' : 'warning'} className="text-[8px] font-extrabold py-0 px-1">
+                            {item.priority}
+                          </Badge>
+                        </td>
+                        <td className="py-2 px-3 text-center">
+                          <button 
+                            onClick={() => handleMarkReviewed(item.id)}
+                            className="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-650 font-bold rounded-md transition-colors border border-emerald-100 text-[8px]"
+                          >
+                            Settle
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </Card>
+
+          {/* Match Rate Accuracy Trend (Mini Recharts Graph) */}
+          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col shrink-0">
+            <div className="border-b border-slate-100 pb-1.5 mb-2">
+              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest font-outfit">Match Rate Trend</h4>
+            </div>
+
+            <div className="h-[90px] w-full pt-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={trendData} margin={{ top: 5, right: 5, left: -35, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <XAxis dataKey="name" stroke="#94a3b8" fontSize={8} tickLine={false} />
+                  <YAxis stroke="#94a3b8" fontSize={8} tickLine={false} unit="%" />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '8px', fontSize: '9px', padding: '4px' }}
+                  />
+                  <Line type="monotone" dataKey="rate" stroke="#00a896" strokeWidth={2.5} dot={{ r: 2.5, fill: '#00a896', strokeWidth: 0 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+        </div>
+
+      </div>
 
       {/* Transaction Details Modal */}
       {selectedTx && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-100 w-full max-w-md rounded-3xl p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-100 w-full max-w-sm rounded-2xl p-5 shadow-2xl relative animate-in fade-in zoom-in-95 duration-150">
             <button 
               onClick={() => setSelectedTx(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-sm font-extrabold"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-650 text-sm font-extrabold"
             >
               ✕
             </button>
-            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest font-outfit border-b border-slate-100 pb-3 flex items-center gap-1.5">
-              <Sparkles className="h-4.5 w-4.5 text-violet-500 animate-pulse" />
-              Transaction Audit Panel: {selectedTx.id}
+            <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest font-outfit border-b border-slate-100 pb-2 flex items-center gap-1.5">
+              <Sparkles className="h-4 w-4 text-violet-500 animate-pulse" />
+              Transaction details: {selectedTx.id}
             </h3>
 
-            <div className="space-y-4 py-4 text-xs font-semibold text-slate-650">
-              <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                <span className="text-slate-400">Customer Name:</span>
+            <div className="space-y-3 py-3 text-[11px] font-semibold text-slate-650 text-left">
+              <div className="flex justify-between items-center py-1.5 border-b border-slate-50">
+                <span className="text-slate-400">Customer:</span>
                 <span className="text-slate-800 font-bold">{selectedTx.customer}</span>
               </div>
 
-              <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                <span className="text-slate-400">Bank Entry amount:</span>
+              <div className="flex justify-between items-center py-1.5 border-b border-slate-50">
+                <span className="text-slate-400">Bank Value:</span>
                 <span className="text-slate-800 font-bold">{selectedTx.bankAmount}</span>
               </div>
 
-              <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                <span className="text-slate-400">Invoice Entry amount:</span>
+              <div className="flex justify-between items-center py-1.5 border-b border-slate-50">
+                <span className="text-slate-400">Invoice Value:</span>
                 <span className="text-slate-800 font-bold">{selectedTx.invoiceAmount}</span>
               </div>
 
-              <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                <span className="text-slate-400">Isolated Difference:</span>
+              <div className="flex justify-between items-center py-1.5 border-b border-slate-50">
+                <span className="text-slate-400">Difference:</span>
                 <span className="text-rose-600 font-bold">{selectedTx.difference}</span>
               </div>
 
-              <div className="flex justify-between items-center py-2 border-b border-slate-50">
-                <span className="text-slate-400">AI Confident Score:</span>
-                <span className="text-teal-600 font-bold">{selectedTx.confidence}%</span>
+              <div className="flex justify-between items-center py-1.5 border-b border-slate-50">
+                <span className="text-slate-400">AI Confidence:</span>
+                <span className="text-teal-650 font-bold">{selectedTx.confidence}%</span>
               </div>
 
-              <div className="bg-amber-50 border border-amber-100 text-amber-700 p-3 rounded-2xl text-[10px] font-bold flex items-center gap-2 mt-2">
-                <AlertCircle className="h-4 w-4 text-amber-550 shrink-0" />
-                <span>Status: ⚠️ Human Review Required (Flagged discrepancy exception)</span>
+              <div className="bg-amber-50 border border-amber-100 text-amber-700 p-2.5 rounded-xl text-[9px] font-bold flex items-center gap-1.5 mt-1.5">
+                <AlertCircle className="h-3.5 w-3.5 text-amber-550 shrink-0" />
+                <span>Status: ⚠️ Human Review Required</span>
               </div>
             </div>
 
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-1.5">
               <Button 
                 onClick={() => {
                   setSelectedTx(null);
-                  toast.success(`Transaction ${selectedTx.id} has been marked as matched manually.`);
+                  toast.success(`Transaction ${selectedTx.id} manually settled.`);
                 }}
-                className="flex-1 bg-teal-600 hover:bg-teal-750 text-white rounded-xl text-xs font-bold py-2.5"
+                className="flex-1 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold py-2"
               >
                 Mark Reconciled
               </Button>
               <Button 
                 onClick={() => setSelectedTx(null)}
-                className="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold py-2.5 border border-slate-100"
+                className="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold py-2 border border-slate-100"
               >
-                Close Panel
+                Cancel
               </Button>
             </div>
           </div>
         </div>
       )}
-
-      {/* AI Matching Confidence & AI Insights */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        {/* Left Side: AI Matching Confidence */}
-        <Card className="bg-white border-slate-100 p-6 rounded-3xl shadow-sm space-y-6">
-          <div>
-            <h4 className="text-xs font-black text-slate-850 uppercase tracking-widest font-outfit">AI Matching Confidence</h4>
-            <p className="text-[10px] text-slate-400 mt-0.5">Confidence distribution metrics calculated by Llama-3.1-8b</p>
-          </div>
-
-          <div className="space-y-4">
-            {[
-              { label: 'High Confidence', count: 82, pct: 82, color: 'bg-emerald-500' },
-              { label: 'Medium Confidence', count: 10, pct: 10, color: 'bg-indigo-500' },
-              { label: 'Low Confidence', count: 8, pct: 8, color: 'bg-rose-500' }
-            ].map((conf, idx) => (
-              <div key={idx} className="space-y-1.5 text-left">
-                <div className="flex justify-between items-baseline text-xs font-semibold">
-                  <span className="text-slate-700">{conf.label}</span>
-                  <span className="text-slate-500">{conf.count} records ({conf.pct}%)</span>
-                </div>
-                <div className="w-full bg-slate-50 h-2.5 rounded-full overflow-hidden border border-slate-100/50">
-                  <div className={`h-full ${conf.color}`} style={{ width: `${conf.pct}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Right Side: AI Insights (Forensic summaries) */}
-        <Card className="bg-white border-slate-100 p-6 rounded-3xl shadow-sm space-y-4 text-left">
-          <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3">
-            <Brain className="h-4.5 w-4.5 text-violet-500" />
-            <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider font-outfit">🤖 AI Reconciliation Insights</h4>
-          </div>
-
-          <ul className="space-y-3 text-xs font-semibold text-slate-650">
-            {[
-              '87% of multi-source records were successfully reconciled.',
-              'Most exceptions are caused by amount discrepancies (e.g. discount adjustments).',
-              '3 invoices are currently missing from the local accounting ledger source.',
-              '₹42,500 unresolved exception value requires human review queue actions.',
-              'No automatic match was made for 1 low-confidence duplicate reference.'
-            ].map((insightStr, idx) => (
-              <li key={idx} className="flex gap-2 items-start">
-                <span className="text-violet-500 font-bold">•</span>
-                <span className="leading-relaxed">{insightStr}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-
-      </div>
-
-      {/* Human Review Queue */}
-      <Card className="bg-white border-slate-100 p-6 rounded-3xl shadow-sm space-y-4">
-        <div>
-          <h4 className="text-xs font-black text-slate-850 uppercase tracking-widest font-outfit">Human Review Required Queue</h4>
-          <p className="text-[10px] text-slate-400 mt-0.5">{reviewQueue.length} exceptions require manual verification</p>
-        </div>
-
-        {reviewQueue.length === 0 ? (
-          <div className="text-center py-8 text-slate-400 font-bold text-xs">
-            🎉 All exceptions reviewed and settled!
-          </div>
-        ) : (
-          <div className="overflow-x-auto border border-slate-100 rounded-2xl">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold">
-                  <th className="py-2.5 px-4">Transaction ID</th>
-                  <th className="py-2.5 px-4">Isolated Issue</th>
-                  <th className="py-2.5 px-4">Amount</th>
-                  <th className="py-2.5 px-4">Priority</th>
-                  <th className="py-2.5 px-4 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50 font-semibold text-slate-700">
-                {reviewQueue.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/50">
-                    <td className="py-3 px-4 font-bold text-slate-900">{item.id}</td>
-                    <td className="py-3 px-4">{item.issue}</td>
-                    <td className="py-3 px-4 text-slate-800">{item.amount}</td>
-                    <td className="py-3 px-4">
-                      <Badge variant={
-                        item.priority === 'HIGH' ? 'danger' : 'warning'
-                      } className="text-[9px] font-bold">
-                        {item.priority}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4 text-center flex justify-center gap-2">
-                      <button 
-                        onClick={() => {
-                          const exc = exceptions.find(e => e.id === item.id) || {
-                            id: item.id,
-                            customer: 'Acme Corp',
-                            bankAmount: item.amount,
-                            invoiceAmount: '-',
-                            difference: '-',
-                            status: 'UNRESOLVED',
-                            confidence: 50
-                          };
-                          setSelectedTx(exc);
-                        }}
-                        className="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 text-slate-650 font-bold rounded-lg transition-colors border border-slate-100"
-                      >
-                        View
-                      </button>
-                      <button 
-                        onClick={() => handleMarkReviewed(item.id)}
-                        className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-650 font-bold rounded-lg transition-colors border border-emerald-100"
-                      >
-                        Settle
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
-
-      {/* Match Rate Trend */}
-      <Card className="bg-white border-slate-100 p-6 rounded-3xl shadow-sm space-y-4">
-        <div>
-          <h4 className="text-xs font-black text-slate-850 uppercase tracking-widest font-outfit">Match Rate Accuracy Trend</h4>
-          <p className="text-[10px] text-slate-400 mt-0.5">System reconciliation rate improvements over consecutive runs</p>
-        </div>
-
-        <div className="h-[200px] w-full pt-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={trendData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-              <XAxis dataKey="name" stroke="#94a3b8" fontSize={9} tickLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={9} tickLine={false} unit="%" />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', fontSize: '11px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
-                labelStyle={{ color: '#64748b', fontWeight: 'bold' }}
-              />
-              <Line type="monotone" dataKey="rate" name="Match Rate Accuracy" stroke="#00a896" strokeWidth={3} activeDot={{ r: 6 }} dot={{ r: 4, fill: '#00a896', strokeWidth: 0 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
 
     </div>
   );
