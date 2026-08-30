@@ -1,7 +1,4 @@
 import React, { useState, useRef } from 'react';
-import Card from '../components/ui/Card';
-import Button from '../components/ui/Button';
-import Badge from '../components/ui/Badge';
 import { toast } from '../components/ui/Toast';
 import { api } from '../services/api';
 import {
@@ -9,8 +6,6 @@ import {
   RefreshCw,
   Search,
   Sparkles,
-  FileSpreadsheet,
-  Check,
   UploadCloud,
   Landmark,
   FileText,
