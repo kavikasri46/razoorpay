@@ -172,11 +172,16 @@ export const LandingPage: React.FC = () => {
           {/* Social Proof */}
           <div className="flex items-center gap-3 pt-6 border-t border-slate-100">
             <div className="flex -space-x-2">
-              {[1, 2, 3].map(i => (
+              {[
+                'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
+                'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100',
+                'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'
+              ].map((url, idx) => (
                 <img 
-                  key={i}
+                  key={idx}
                   className="h-8 w-8 rounded-full border-2 border-white object-cover" 
-                  src={`https://images.unsplash.com/photo-${1500000000000 + i * 10000}?w=100`} 
+                  src={url} 
                   alt="user" 
                 />
               ))}
