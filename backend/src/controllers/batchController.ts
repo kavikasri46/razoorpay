@@ -78,6 +78,12 @@ async function validateRow(
     if (isNaN(parsedDate.getTime())) {
       errors.push('invalid_date');
       parsedDate = null;
+    } else {
+      const year = parsedDate.getFullYear();
+      if (year < 1900 || year > 2100) {
+        errors.push('out_of_bounds_date');
+        parsedDate = null;
+      }
     }
   }
 
@@ -128,7 +134,7 @@ async function validateRow(
 
 export async function uploadBatch(req: Request, res: Response, next: NextFunction) {
   try {
-    const userId = (req as any).user.id;
+    const userId = (req as any).user.userId;
 
     // ── Accept either multipart/form-data (real file) OR legacy JSON body ──
     let rawData: any[] = [];
@@ -253,7 +259,7 @@ export async function uploadBatch(req: Request, res: Response, next: NextFunctio
 
 export async function importBatch(req: Request, res: Response, next: NextFunction) {
   try {
-    const userId = (req as any).user.id;
+    const userId = (req as any).user.userId;
     const { id } = req.params;
     const { duplicateAction } = req.body; // 'SKIP' or 'IMPORT_ALL'
 
@@ -347,7 +353,7 @@ export async function importBatch(req: Request, res: Response, next: NextFunctio
 
 export async function getBatches(req: Request, res: Response, next: NextFunction) {
   try {
-    const userId = (req as any).user.id;
+    const userId = (req as any).user.userId;
 
     const batches = await prisma.analysisBatch.findMany({
       where: { userId },
@@ -365,7 +371,7 @@ export async function getBatches(req: Request, res: Response, next: NextFunction
 
 export async function getBatchById(req: Request, res: Response, next: NextFunction) {
   try {
-    const userId = (req as any).user.id;
+    const userId = (req as any).user.userId;
     const { id } = req.params;
 
     const batch = await prisma.analysisBatch.findFirst({
@@ -392,7 +398,7 @@ export async function getBatchById(req: Request, res: Response, next: NextFuncti
 
 export async function compareStatements(req: Request, res: Response, next: NextFunction) {
   try {
-    const userId = (req as any).user.id;
+    const userId = (req as any).user.userId;
     const { bankData, invoiceData } = req.body;
 
     if (!Array.isArray(bankData) || !Array.isArray(invoiceData)) {
