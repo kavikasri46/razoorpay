@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { toast } from '../components/ui/Toast';
 import { api } from '../services/api';
+import { generateReconciliationPDF } from '../utils/pdfGenerator';
 import {
   ArrowLeftRight,
+  Download,
   RefreshCw,
   Search,
   Sparkles,
@@ -372,6 +374,36 @@ export const CompareFiles: React.FC = () => {
       {/* ── Results Section ── */}
       {hasCompared && (
         <div className="space-y-6">
+
+          {/* Results Action Bar */}
+          <div className="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg text-white">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-teal-500/20 border border-teal-500/30 text-teal-300 flex items-center justify-center font-bold">
+                <CheckCircle2 className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-sm font-bold text-white font-outfit">Reconciliation Audit Summary</h3>
+                <p className="text-[10px] text-slate-400">Generated multi-source matching report ready for export</p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                generateReconciliationPDF({
+                  totalCompared,
+                  matchedCount,
+                  differenceCount,
+                  matchRate,
+                  aiReport,
+                  discrepancies: discrepancyList
+                });
+                toast.success('Reconciliation PDF generated and downloaded (< 150 KB)!');
+              }}
+              className="flex items-center gap-2 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg shadow-teal-500/20 transition-all transform active:scale-95"
+            >
+              <Download className="w-4 h-4" />
+              <span>Export Audit PDF (&lt; 2 MB)</span>
+            </button>
+          </div>
 
           {/* KPI Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

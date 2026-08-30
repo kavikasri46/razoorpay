@@ -11,7 +11,7 @@ export const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role] = useState<'USER' | 'ADMIN'>('ADMIN');
+  const [role] = useState<'USER' | 'ADMIN'>('USER');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 

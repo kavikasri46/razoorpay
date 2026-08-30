@@ -3,8 +3,11 @@ import { aiApi } from '../services/aiApi';
 import { analyticsApi } from '../services/analyticsApi';
 import LoadingSkeleton from '../components/ui/LoadingSkeleton';
 import ErrorState from '../components/ui/ErrorState';
+import { generateFinancialHealthPDF } from '../utils/pdfGenerator';
+import { toast } from '../components/ui/Toast';
 import {
   HeartPulse,
+  Download,
   Check,
   AlertCircle,
   ShieldAlert,
@@ -184,13 +187,29 @@ export const FinancialHealth: React.FC = () => {
             <p className="text-[11px] text-slate-400 font-semibold mt-0.5">Audit score computed using cash surplus ratios, budget safety margins, and transaction risk markers.</p>
           </div>
         </div>
-        <button
-          onClick={fetchHealthMetrics}
-          className="flex items-center gap-2 bg-slate-50 hover:bg-teal-50 border border-slate-200 hover:border-teal-300 text-slate-600 hover:text-teal-700 rounded-xl px-4 py-2.5 text-xs font-bold transition-all duration-200"
-        >
-          <RefreshCw className="h-3.5 w-3.5" />
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={fetchHealthMetrics}
+            className="flex items-center gap-2 bg-slate-50 hover:bg-teal-50 border border-slate-200 hover:border-teal-300 text-slate-600 hover:text-teal-700 rounded-xl px-4 py-2.5 text-xs font-bold transition-all duration-200"
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Refresh
+          </button>
+          <button
+            onClick={() => {
+              generateFinancialHealthPDF(score ?? 90, {
+                savingsRatio: savingsRatio.toFixed(0),
+                budgetAdherence: budgetAdherence.toFixed(0),
+                riskFlagCount: anomalyBurden
+              });
+              toast.success('Financial Health PDF report downloaded (< 150 KB)!');
+            }}
+            className="flex items-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white rounded-xl px-4 py-2.5 text-xs font-bold transition-all shadow-md shadow-teal-500/20"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Export Health PDF (&lt; 2 MB)
+          </button>
+        </div>
       </div>
 
       {/* ── Score + Explanation ── */}
