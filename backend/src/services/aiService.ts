@@ -254,7 +254,7 @@ I am ready to help you navigate your finances. Here are some of the actions you 
 }
 
 export async function generateReconciliationReport(
-  userId: string,
+  _userId: string,
   stats: { total: number; matched: number; differences: number; matchRate: number },
   discrepancies: Array<{ id: string; bankAmount: number | string; invoiceAmount: number | string; difference: number | string; status: string; description: string }>
 ): Promise<string> {

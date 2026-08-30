@@ -141,7 +141,7 @@ export async function uploadBatch(req: Request, res: Response, next: NextFunctio
 
       const { rows, error } = await parseUploadedFile(req.file.buffer, filename);
       if (error) {
-        return res.status(400).json({ success: false, message: error });
+        res.status(400).json({ success: false, message: error }); return;
       }
       rawData = rows;
     } else {
@@ -152,10 +152,10 @@ export async function uploadBatch(req: Request, res: Response, next: NextFunctio
     }
 
     if (!filename || !sourceType || !Array.isArray(rawData) || rawData.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Invalid payload: file or rawData is required, along with sourceType.',
-      });
+      }); return;
     }
 
     // Auto detect headers
@@ -262,7 +262,7 @@ export async function importBatch(req: Request, res: Response, next: NextFunctio
     });
 
     if (!batch) {
-      return res.status(404).json({ success: false, message: 'Analysis batch not found.' });
+      res.status(404).json({ success: false, message: 'Analysis batch not found.' }); return;
     }
 
     // Fetch existing transaction references to do the duplicate action
@@ -283,7 +283,7 @@ export async function importBatch(req: Request, res: Response, next: NextFunctio
     const duplicateIds: string[] = [];
     const validIds: string[] = [];
 
-    for (const rec of recordsToImport) {
+    for (const rec of batch.records) {
       const isDuplicate = 
         (rec.reference && existingRefs.has(rec.reference)) || 
         (rec.transactionId && existingTxIds.has(rec.transactionId));
@@ -377,7 +377,7 @@ export async function getBatchById(req: Request, res: Response, next: NextFuncti
     });
 
     if (!batch) {
-      return res.status(404).json({ success: false, message: 'Analysis batch not found.' });
+      res.status(404).json({ success: false, message: 'Analysis batch not found.' }); return;
     }
 
     res.status(200).json({
@@ -395,7 +395,7 @@ export async function compareStatements(req: Request, res: Response, next: NextF
     const { bankData, invoiceData } = req.body;
 
     if (!Array.isArray(bankData) || !Array.isArray(invoiceData)) {
-      return res.status(400).json({ success: false, message: 'Invalid payload: bankData and invoiceData arrays are required.' });
+      res.status(400).json({ success: false, message: 'Invalid payload: bankData and invoiceData arrays are required.' }); return;
     }
 
     const idKeys = ['txid', 'transactionid', 'id', 'reference', 'utrref', 'utr', 'ref', 'transaction_id', 'tx_id'];

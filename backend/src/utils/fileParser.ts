@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import pdfParse from 'pdf-parse';
+const pdfParse = require('pdf-parse');
 import mammoth from 'mammoth';
 
 // Custom CSV splitter (handles quoted commas)
@@ -47,22 +47,22 @@ async function parsePDF(buf: Buffer): Promise<any[]> {
   const data = await pdfParse(buf);
   const lines = data.text
     .split('\n')
-    .map(l => l.trim())
-    .filter(l => l.length > 0);
+    .map((l: string) => l.trim())
+    .filter((l: string) => l.length > 0);
 
   // Heuristic: find lines with multiple whitespace-separated tokens (table rows)
-  const tableLines = lines.filter(l => l.split(/\s{2,}/).length >= 2);
+  const tableLines = lines.filter((l: string) => l.split(/\s{2,}/).length >= 2);
   if (tableLines.length === 0) {
     // Fallback: return raw lines as single-column rows
-    return lines.map(l => ({ raw_text: l }));
+    return lines.map((l: string) => ({ raw_text: l }));
   }
 
   // Use first line as headers
   const headers = tableLines[0].split(/\s{2,}/);
-  return tableLines.slice(1).map(line => {
+  return tableLines.slice(1).map((line: string) => {
     const cols = line.split(/\s{2,}/);
     const row: any = {};
-    headers.forEach((h, i) => { row[h] = cols[i] ?? null; });
+    headers.forEach((h: string, i: number) => { row[h] = cols[i] ?? null; });
     return row;
   });
 }
@@ -72,19 +72,19 @@ async function parseWord(buf: Buffer): Promise<any[]> {
   const result = await mammoth.extractRawText({ buffer: buf });
   const lines = result.value
     .split('\n')
-    .map(l => l.trim())
-    .filter(l => l.length > 0);
+    .map((l: string) => l.trim())
+    .filter((l: string) => l.length > 0);
 
-  const tableLines = lines.filter(l => l.split(/\t|\s{2,}/).length >= 2);
+  const tableLines = lines.filter((l: string) => l.split(/\t|\s{2,}/).length >= 2);
   if (tableLines.length === 0) {
-    return lines.map(l => ({ raw_text: l }));
+    return lines.map((l: string) => ({ raw_text: l }));
   }
 
   const headers = tableLines[0].split(/\t|\s{2,}/);
-  return tableLines.slice(1).map(line => {
+  return tableLines.slice(1).map((line: string) => {
     const cols = line.split(/\t|\s{2,}/);
     const row: any = {};
-    headers.forEach((h, i) => { row[h] = cols[i] ?? null; });
+    headers.forEach((h: string, i: number) => { row[h] = cols[i] ?? null; });
     return row;
   });
 }
