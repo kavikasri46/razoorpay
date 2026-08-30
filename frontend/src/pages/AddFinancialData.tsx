@@ -4,56 +4,21 @@ import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import { toast } from '../components/ui/Toast';
 import { api } from '../services/api';
-import { 
-  Database, 
-  UploadCloud, 
-  ArrowRight, 
-  CheckCircle, 
-  AlertTriangle, 
-  Info, 
-  RefreshCw, 
-  Check, 
-  AlertCircle
+import {
+  Database,
+  UploadCloud,
+  ArrowRight,
+  CheckCircle,
+  AlertTriangle,
+  Info,
+  RefreshCw,
+  Check,
+  AlertCircle,
 } from 'lucide-react';
 
-// Custom CSV Parser
-function parseCSV(text: string) {
-  const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
-  if (lines.length === 0) return [];
-  
-  const headers = splitCSVLine(lines[0]);
-  const rows: any[] = [];
-  
-  for (let i = 1; i < lines.length; i++) {
-    const values = splitCSVLine(lines[i]);
-    const row: any = {};
-    headers.forEach((header, index) => {
-      row[header] = values[index] !== undefined ? values[index] : null;
-    });
-    rows.push(row);
-  }
-  return rows;
-}
+// Supported file extensions
+const SUPPORTED_EXTENSIONS = ['csv', 'json', 'xlsx', 'xls', 'pdf', 'docx', 'doc'];
 
-function splitCSVLine(line: string) {
-  const result: string[] = [];
-  let current = '';
-  let inQuotes = false;
-  
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim());
-      current = '';
-    } else {
-      current += char;
-    }
-  }
-  result.push(current.trim());
-  return result.map(val => val.replace(/^"|"$/g, ''));
-}
 
 export const AddFinancialData: React.FC = () => {
   const [step, setStep] = useState<number>(1);
@@ -101,73 +66,66 @@ export const AddFinancialData: React.FC = () => {
   };
 
   const handleFileSelected = async (selectedFile: File) => {
-    const ext = selectedFile.name.split('.').pop()?.toLowerCase();
-    if (ext !== 'csv' && ext !== 'json' && ext !== 'xlsx') {
-      toast.error('Unsupported file format. Please upload CSV, XLSX or JSON.');
+    const ext = selectedFile.name.split('.').pop()?.toLowerCase() ?? '';
+    if (!SUPPORTED_EXTENSIONS.includes(ext)) {
+      toast.error(`Unsupported file type ".${ext}". Allowed: ${SUPPORTED_EXTENSIONS.join(', ')}`);
       return;
     }
-    
+
     setFile(selectedFile);
     setStep(2);
-    
-    // Simulate upload progress
+
+    // Animate progress bar then send to backend
     let prog = 0;
     const interval = setInterval(() => {
-      prog += 10;
-      if (prog >= 100) {
-        clearInterval(interval);
-        setUploadProgress(100);
-        processFile(selectedFile);
-      } else {
-        setUploadProgress(prog);
-      }
-    }, 100);
+      prog += 8;
+      if (prog >= 90) { clearInterval(interval); setUploadProgress(90); }
+      else setUploadProgress(prog);
+    }, 80);
+
+    await processFile(selectedFile, interval);
   };
 
-  const processFile = (selectedFile: File) => {
+  const processFile = async (selectedFile: File, progressInterval?: ReturnType<typeof setInterval>) => {
     setIsProcessing(true);
-    const reader = new FileReader();
-    
-    reader.onload = async (e) => {
-      try {
-        const text = e.target?.result as string;
-        let parsedRows: any[] = [];
-        
-        const ext = selectedFile.name.split('.').pop()?.toLowerCase();
-        if (ext === 'json') {
-          parsedRows = JSON.parse(text);
-        } else {
-          parsedRows = parseCSV(text);
-        }
+    try {
+      // ── Send as multipart/form-data so the backend parses the real binary ──
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('sourceType', sourceType || 'BANK_STATEMENT');
 
-        if (parsedRows.length === 0) {
-          throw new Error('No records found in this file.');
-        }
+      const response = await api.post('/batches/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (evt) => {
+          if (evt.total) {
+            setUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+          }
+        },
+      });
 
-        const response = await api.post('/batches/upload', {
-          filename: selectedFile.name,
-          sourceType,
-          rawData: parsedRows
-        });
+      if (progressInterval) clearInterval(progressInterval);
+      setUploadProgress(100);
 
-        if (response.data.success) {
-          setProcessedData(response.data.data);
-          setMapping(response.data.data.detectedMapping);
-          setStep(3);
-        } else {
-          toast.error(response.data.message || 'Failed to process file.');
-          setStep(1);
-        }
-      } catch (err: any) {
-        console.error(err);
-        toast.error(err.message || 'Parsing error. Verify file format.');
+      if (response.data.success) {
+        setProcessedData(response.data.data);
+        setMapping(response.data.data.detectedMapping);
+        setStep(3);
+      } else {
+        toast.error(response.data.message || 'Failed to process file.');
         setStep(1);
-      } finally {
-        setIsProcessing(false);
       }
-    };
-
-    reader.readAsText(selectedFile);
+    } catch (err: any) {
+      if (progressInterval) clearInterval(progressInterval);
+      console.error(err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        'Upload failed. Please try again.';
+      toast.error(msg);
+      setStep(1);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleMappingChange = (field: string, fileKey: string) => {
@@ -321,7 +279,7 @@ export const AddFinancialData: React.FC = () => {
               ref={fileInputRef} 
               onChange={handleFileChange} 
               className="hidden" 
-              accept=".csv,.json"
+              accept=".csv,.json,.xlsx,.xls,.pdf,.docx,.doc"
             />
           </div>
         </div>

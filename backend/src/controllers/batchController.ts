@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { parseUploadedFile } from '../utils/fileParser';
 
 const prisma = new PrismaClient();
 
@@ -81,7 +82,7 @@ async function validateRow(
 
   // 3. Currency Validation
   const currencyKey = mapping.currency;
-  const currencyVal = currencyKey ? String(row[currencyKey]).trim().toUpperCase() : 'INR'; // default to INR
+  const currencyVal = currencyKey ? String(row[currencyKey]).trim().toUpperCase() : 'INR';
   const validCurrencies = ['INR', 'USD', 'EUR', 'GBP', 'AED', 'SGD'];
   if (currencyKey && row[currencyKey] && !validCurrencies.includes(currencyVal)) {
     errors.push('invalid_currency');
@@ -97,10 +98,9 @@ async function validateRow(
   // 5. Reference / Duplicate Check
   const refKey = mapping.reference;
   const refVal = refKey ? String(row[refKey]).trim() : '';
-  
+
   let isDuplicate = false;
   if (refVal) {
-    // Check inside database OR inside current batch
     if (existingRefs.has(refVal) || batchRefs.has(refVal)) {
       isDuplicate = true;
     }
@@ -111,7 +111,6 @@ async function validateRow(
     }
   }
 
-  // Add to batch sets to detect duplicates within this file
   if (refVal) batchRefs.add(refVal);
   if (txIdVal) batchTxIds.add(txIdVal);
 
@@ -129,10 +128,34 @@ async function validateRow(
 export async function uploadBatch(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = (req as any).user.id;
-    const { filename, sourceType, rawData } = req.body;
+
+    // ── Accept either multipart/form-data (real file) OR legacy JSON body ──
+    let rawData: any[] = [];
+    let filename = '';
+    let sourceType = '';
+
+    if (req.file) {
+      // Multipart upload from frontend FormData
+      filename   = req.file.originalname;
+      sourceType = req.body.sourceType ?? 'BANK_STATEMENT';
+
+      const { rows, error } = await parseUploadedFile(req.file.buffer, filename);
+      if (error) {
+        return res.status(400).json({ success: false, message: error });
+      }
+      rawData = rows;
+    } else {
+      // Fallback: legacy JSON body
+      filename   = req.body.filename;
+      sourceType = req.body.sourceType;
+      rawData    = req.body.rawData;
+    }
 
     if (!filename || !sourceType || !Array.isArray(rawData) || rawData.length === 0) {
-      return res.status(400).json({ success: false, message: 'Invalid payload: filename, sourceType and rawData (array) are required.' });
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid payload: file or rawData is required, along with sourceType.',
+      });
     }
 
     // Auto detect headers
@@ -142,35 +165,23 @@ export async function uploadBatch(req: Request, res: Response, next: NextFunctio
 
     // Fetch existing records for duplicate reference checking
     const dbRecords = await prisma.financialRecord.findMany({
-      where: {
-        batch: { userId }
-      },
-      select: {
-        reference: true,
-        transactionId: true
-      }
+      where: { batch: { userId } },
+      select: { reference: true, transactionId: true }
     });
 
-    const existingRefs = new Set(dbRecords.map(r => r.reference).filter(Boolean) as string[]);
-    const existingTxIds = new Set(dbRecords.map(r => r.transactionId).filter(Boolean) as string[]);
+    const existingRefs   = new Set(dbRecords.map(r => r.reference).filter(Boolean) as string[]);
+    const existingTxIds  = new Set(dbRecords.map(r => r.transactionId).filter(Boolean) as string[]);
+    const batchRefs      = new Set<string>();
+    const batchTxIds     = new Set<string>();
 
-    // We will keep set of references in this file to detect duplicates within the upload itself
-    const batchRefs = new Set<string>();
-    const batchTxIds = new Set<string>();
-
-    // Process and validate rows
     const validatedRecords: any[] = [];
     let duplicatesCount = 0;
     let hasErrors = false;
 
     for (const row of rawData) {
       const val = await validateRow(row, mapping, existingRefs, existingTxIds, batchRefs, batchTxIds);
-      if (val.isDuplicate) {
-        duplicatesCount++;
-      }
-      if (val.errors.length > 0) {
-        hasErrors = true;
-      }
+      if (val.isDuplicate) duplicatesCount++;
+      if (val.errors.length > 0) hasErrors = true;
       validatedRecords.push({
         transactionId: val.transactionId,
         date: val.parsedDate,
@@ -181,11 +192,10 @@ export async function uploadBatch(req: Request, res: Response, next: NextFunctio
         status: val.errors.length > 0 ? 'INVALID' : 'VALID',
         validationErrors: val.errors,
         isDuplicate: val.isDuplicate,
-        rawData: row // Store original row data in meta/log if needed
+        rawData: row
       });
     }
 
-    // Create the batch in PENDING state
     const batch = await prisma.analysisBatch.create({
       data: {
         userId,
@@ -207,14 +217,9 @@ export async function uploadBatch(req: Request, res: Response, next: NextFunctio
           }))
         }
       },
-      include: {
-        records: {
-          take: 50 // Limit preview records count to 50
-        }
-      }
+      include: { records: { take: 50 } }
     });
 
-    // Update batch status to COMPLETED processing
     await prisma.analysisBatch.update({
       where: { id: batch.id },
       data: { processingStatus: 'COMPLETED' }
@@ -243,6 +248,7 @@ export async function uploadBatch(req: Request, res: Response, next: NextFunctio
     next(error);
   }
 }
+
 
 export async function importBatch(req: Request, res: Response, next: NextFunction) {
   try {
