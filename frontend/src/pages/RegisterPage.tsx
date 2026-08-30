@@ -39,60 +39,68 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5 text-left">
       <div>
-        <h2 className="text-xl font-bold text-white text-center mb-1">Create an account</h2>
-        <p className="text-xs text-slate-400 text-center mb-5">Set up your workspace parameters below</p>
+        <h2 className="text-2xl font-extrabold tracking-tight text-white text-center mb-1">
+          Create an account
+        </h2>
+        <p className="text-xs text-slate-450 text-center mb-5">Set up your workspace parameters below</p>
       </div>
 
       {error && (
-        <div className="bg-red-950/30 border border-red-500/20 text-red-400 text-xs px-4 py-3 rounded-lg font-semibold">
+        <div className="bg-red-950/20 border border-red-500/20 text-red-400 text-xs px-4 py-3 rounded-xl font-semibold">
           {error}
         </div>
       )}
 
-      <Input
-        label="Full Name"
-        type="text"
-        placeholder="Rahul Verma"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-      />
+      <div className="space-y-4">
+        <Input
+          label="Full Name"
+          type="text"
+          placeholder="Rahul Verma"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
 
-      <Input
-        label="Email Address"
-        type="email"
-        placeholder="rahul@razorpay.com"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+        <Input
+          label="Email Address"
+          type="email"
+          placeholder="rahul@razorpay.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-      <Input
-        label="Password"
-        type="password"
-        placeholder="At least 6 characters"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+        <Input
+          label="Password"
+          type="password"
+          placeholder="At least 6 characters"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-      <div className="text-left">
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-          Workspace Access Role
-        </label>
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value as 'USER' | 'ADMIN')}
-          className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 transition-all"
-        >
-          <option value="USER">User (Personal Sandbox)</option>
-          <option value="ADMIN">Admin (Platform Superuser)</option>
-        </select>
+        <div className="text-left space-y-1.5">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Workspace Access Role
+          </label>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value as 'USER' | 'ADMIN')}
+            className="w-full bg-slate-950 border border-slate-900 text-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 transition-all cursor-pointer"
+          >
+            <option value="USER">User (Personal Sandbox)</option>
+            <option value="ADMIN">Admin (Platform Superuser)</option>
+          </select>
+        </div>
       </div>
 
-      <Button type="submit" loading={loading} className="w-full mt-4">
+      <Button 
+        type="submit" 
+        loading={loading} 
+        className="w-full mt-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white border-0 shadow-lg shadow-indigo-600/20 active:scale-[0.97]"
+      >
         Register Account
       </Button>
 

@@ -22,6 +22,7 @@ model User {
   aiInsights        AIInsight[]
   auditLogs         AuditLog[]
   notifications     Notification[]
+  analysisBatches   AnalysisBatch[]
 
   @@map("users")
 }
@@ -120,4 +121,43 @@ model Notification {
   @@index([userId])
   @@index([read])
   @@map("notifications")
+}
+
+model AnalysisBatch {
+  id                String            @id @default(uuid())
+  userId            String
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceType        String            // "BANK_STATEMENT", "INVOICES", "PAYMENTS", "RAZORPAY_SETTLEMENTS"
+  filename          String
+  recordCount       Int
+  processingStatus  String            @default("PENDING") // "PENDING", "PROCESSING", "COMPLETED", "FAILED"
+  validationStatus  String            @default("VALID")   // "VALID", "INVALID", "WARNINGS"
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  records           FinancialRecord[]
+
+  @@index([userId])
+  @@map("analysis_batches")
+}
+
+model FinancialRecord {
+  id                   String        @id @default(uuid())
+  batchId              String
+  batch                AnalysisBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  transactionId        String?
+  date                 DateTime?
+  description          String?
+  amount               Float?
+  currency             String?
+  reference            String?
+  status               String        @default("PENDING") // "PENDING", "VALID", "INVALID"
+  validationErrors     String[]      
+  reconciliationStatus String        @default("UNRECONCILED") // "UNRECONCILED", "MATCHED", "MISMATCHED", "MISSING"
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  @@index([batchId])
+  @@index([transactionId])
+  @@index([reference])
+  @@map("financial_records")
 }

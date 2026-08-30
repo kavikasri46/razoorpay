@@ -37,37 +37,45 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-6 text-left">
       <div>
-        <h2 className="text-xl font-bold text-white text-center mb-1">Welcome back</h2>
-        <p className="text-xs text-slate-400 text-center mb-6">Enter your credentials to access your workspace</p>
+        <h2 className="text-2xl font-extrabold tracking-tight text-white text-center mb-1">
+          Welcome back
+        </h2>
+        <p className="text-xs text-slate-450 text-center mb-6">Enter your credentials to access your workspace</p>
       </div>
 
       {error && (
-        <div className="bg-red-950/30 border border-red-500/20 text-red-400 text-xs px-4 py-3 rounded-lg font-semibold">
+        <div className="bg-red-950/20 border border-red-500/20 text-red-400 text-xs px-4 py-3 rounded-xl font-semibold">
           {error}
         </div>
       )}
 
-      <Input
-        label="Email Address"
-        type="email"
-        placeholder="rahul@razorpay.com"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+      <div className="space-y-4">
+        <Input
+          label="Email Address"
+          type="email"
+          placeholder="rahul@razorpay.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-      <Input
-        label="Password"
-        type="password"
-        placeholder="••••••••"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+        <Input
+          label="Password"
+          type="password"
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
 
-      <Button type="submit" loading={loading} className="w-full mt-2">
+      <Button 
+        type="submit" 
+        loading={loading} 
+        className="w-full mt-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white border-0 shadow-lg shadow-indigo-600/20 active:scale-[0.97]"
+      >
         Sign In
       </Button>
 
@@ -79,15 +87,17 @@ export const LoginPage: React.FC = () => {
       </div>
 
       {/* Demo Credentials Helper */}
-      <div className="mt-8 pt-4 border-t border-slate-800/40 text-left bg-slate-950/40 p-4 rounded-lg">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Demo Credentials</p>
-        <div className="space-y-1">
-          <p className="text-xs text-slate-400">
-            <span className="font-semibold text-slate-300">User:</span> rahul@razorpay.com / <span className="font-mono text-slate-200">user123</span>
-          </p>
-          <p className="text-xs text-slate-400">
-            <span className="font-semibold text-slate-300">Admin:</span> admin@razorpay.com / <span className="font-mono text-slate-200">admin123</span>
-          </p>
+      <div className="mt-8 pt-4 border-t border-slate-900 bg-slate-950/20 backdrop-blur-md p-4 rounded-xl border border-slate-900">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2.5">Demo Accounts</p>
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs">
+            <span className="text-slate-450 font-medium">User Account:</span>
+            <span className="font-mono text-slate-300">rahul@razorpay.com / user123</span>
+          </div>
+          <div className="flex justify-between text-xs">
+            <span className="text-slate-450 font-medium">Admin Account:</span>
+            <span className="font-mono text-slate-300">admin@razorpay.com / admin123</span>
+          </div>
         </div>
       </div>
     </form>

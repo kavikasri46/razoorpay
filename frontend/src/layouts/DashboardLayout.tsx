@@ -22,7 +22,8 @@ import {
   Sun, 
   Moon, 
   Check, 
-  AlertCircle
+  AlertCircle,
+  Database
 } from 'lucide-react';
 
 const DashboardLayout: React.FC = () => {
@@ -56,6 +57,7 @@ const DashboardLayout: React.FC = () => {
     { name: 'AI Assistant', href: '/ai', icon: MessageSquare },
     { name: 'AI Insights', href: '/insights', icon: Lightbulb },
     { name: 'Financial Health', href: '/financial-health', icon: HeartPulse },
+    { name: 'Data Center', href: '/data-center', icon: Database },
     { name: 'Profile', href: '/profile', icon: User },
   ];
 

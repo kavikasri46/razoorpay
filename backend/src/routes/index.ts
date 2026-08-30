@@ -6,6 +6,7 @@ import analyticsRoutes from './analyticsRoutes';
 import aiRoutes from './aiRoutes';
 import notificationRoutes from './notificationRoutes';
 import adminRoutes from './adminRoutes';
+import batchRoutes from './batchRoutes';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/analytics', analyticsRoutes);
 router.use('/ai', aiRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/admin', adminRoutes);
+router.use('/batches', batchRoutes);
 
 export default router;
