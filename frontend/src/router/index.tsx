@@ -14,6 +14,7 @@ import AIInsights from '../pages/AIInsights';
 import FinancialHealth from '../pages/FinancialHealth';
 import Profile from '../pages/Profile';
 import AddFinancialData from '../pages/AddFinancialData';
+import CompareFiles from '../pages/CompareFiles';
 import AdminDashboard from '../pages/AdminDashboard';
 import AdminUsers from '../pages/AdminUsers';
 import AdminAuditLogs from '../pages/AdminAuditLogs';
@@ -54,6 +55,7 @@ export const AppRouter: React.FC = () => {
           <Route path="/financial-health" element={<FinancialHealth />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/data-center" element={<AddFinancialData />} />
+          <Route path="/reconcile" element={<CompareFiles />} />
           
           {/* Admin Protected routes */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
