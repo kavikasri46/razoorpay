@@ -11,7 +11,6 @@ import {
   Fingerprint,
   Activity,
   GitBranch,
-  TrendingUp,
   Sparkles,
   Zap,
   Lock,
@@ -23,38 +22,38 @@ import Button from '../components/ui/Button';
 
 export const LandingPage: React.FC = () => {
   const stats = [
-    { label: 'Total Transactions', value: '$ 2.4B+' },
-    { label: 'Active Users', value: '200K+' },
-    { label: 'Secure & Trusted', value: '98.7%' },
-    { label: 'Countries Covered', value: '150+' },
+    { label: 'Total Reconciled', value: '$ 2.4B+' },
+    { label: 'Corporate Accounts', value: '10K+' },
+    { label: 'Secure & Trusted', value: '99.9%' },
+    { label: 'Payment Channels', value: '150+' },
     { label: 'Customer Support', value: '24/7' }
   ];
 
   const features = [
     {
-      title: 'AI-Powered Insights',
-      desc: 'Smart analytics to help you make better financial decisions.',
+      title: 'AI-Powered Reconciliation',
+      desc: 'Automatic transaction matching and anomaly explanation powered by Groq Llama 3.1.',
       icon: Brain,
       color: 'text-violet-600',
       bgColor: 'bg-violet-50'
     },
     {
-      title: 'Expense Tracking',
-      desc: 'Track and categorize your expenses in real time effortlessly.',
+      title: 'Ledger Audit Trails',
+      desc: 'Maintains complete evidence logs showing files mapped, exceptions isolated, and resolved states.',
       icon: LineChart,
       color: 'text-orange-500',
       bgColor: 'bg-orange-50'
     },
     {
-      title: 'Budget Planning',
-      desc: 'Set budgets, get alerts and stay on track with your financial goals.',
+      title: 'Multi-Gateway Feeds',
+      desc: 'Sync bank statements directly alongside Stripe, PayPal, Razorpay, or local ledger CSVs.',
       icon: Cpu,
       color: 'text-blue-500',
       bgColor: 'bg-blue-50'
     },
     {
-      title: 'Invest & Grow',
-      desc: 'Invest in stocks, crypto and mutual funds with zero hassle.',
+      title: 'Fraud & Exception Alerts',
+      desc: 'Flag potential billing errors, mismatched values, duplicate references, and speed deviations.',
       icon: ShieldCheck,
       color: 'text-pink-500',
       bgColor: 'bg-pink-50'
@@ -62,29 +61,29 @@ export const LandingPage: React.FC = () => {
   ];
 
   const steps = [
-    { num: '01', title: 'Create Account', desc: 'Sign up in seconds and set up your profile.' },
-    { num: '02', title: 'Add Money', desc: 'Add funds securely using multiple options.' },
-    { num: '03', title: 'Track & Manage', desc: 'Track expenses, set budgets and get AI tips.' },
-    { num: '04', title: 'Grow Wealth', desc: 'Invest, save and grow your wealth smarter.' }
+    { num: '01', title: 'Register Profile', desc: 'Create your secure company profile and workspace parameters.' },
+    { num: '02', title: 'Upload Ledgers', desc: 'Import bank feeds or invoice ledgers via manual file upload or direct API sync.' },
+    { num: '03', title: 'Match Statements', desc: 'Run the matching algorithm to automatically pair ledger balances and flag anomalies.' },
+    { num: '04', title: 'AI Audit Report', desc: 'Review isolated exceptions, download AI-generated discrepancy summaries, and audit.' }
   ];
 
   const testimonials = [
     {
       name: 'Sarah J.',
-      role: 'Marketing Manager',
-      quote: 'RazorPay helped me save more and spend wisely. The AI insights are just amazing!',
+      role: 'Accounting Lead',
+      quote: 'RazorPay helped us save hundreds of hours of manual statement audits. The AI-powered discrepancy logs are amazing!',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150'
     },
     {
       name: 'David K.',
-      role: 'Product Designer',
-      quote: 'Super easy to use and very secure. Now I manage all my finances in one place.',
+      role: 'VP of Finance',
+      quote: 'Super easy to parse CSV and match ledgers. Now we close our monthly books in hours, not weeks.',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150'
     },
     {
       name: 'Michael T.',
-      role: 'Entrepreneur',
-      quote: 'Investing has never been this simple. Great app for both beginners and pros.',
+      role: 'Finance Controller',
+      quote: 'Reconciling gateway payouts and direct bank statements has never been this accurate.',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150'
     }
   ];
@@ -94,19 +93,19 @@ export const LandingPage: React.FC = () => {
       name: 'Free Plan',
       price: '$0',
       popular: false,
-      features: ['Expense Tracking', 'Budget Planning', 'Basic Reports']
+      features: ['100 Reconciliations / Mo', 'Basic CSV Parser', 'Manual Mapping Adjustments', 'Standard Exception Logs']
     },
     {
       name: 'Pro Plan',
-      price: '$4.99',
+      price: '$49',
       popular: true,
-      features: ['AI Insights', 'Advanced Reports', 'Investment Tracking', 'Priority Support']
+      features: ['5,000 Reconciliations / Mo', 'AI Anomaly Auditing', 'Multi-Gateway Feeds Sync', 'Priority Email Support']
     },
     {
       name: 'Premium Plan',
-      price: '$9.99',
+      price: '$149',
       popular: false,
-      features: ['All Pro Features', 'Portfolio Analytics', 'Crypto & Stocks', '24/7 Priority Support']
+      features: ['Unlimited Reconciliations', 'Multi-User Workspace Seats', 'Advanced Fraud Alerts', '24/7 Dedicated Support Officer']
     }
   ];
 
@@ -126,7 +125,7 @@ export const LandingPage: React.FC = () => {
             </span>
           </div>
 
-          <div className="hidden lg:flex items-center gap-8 text-xs font-semibold text-slate-650">
+          <div className="hidden lg:flex items-center gap-8 text-xs font-semibold text-slate-600">
             {['Home', 'Features', 'Solutions', 'Pricing', 'Resources', 'Company'].map(item => (
               <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-violet-600 transition-colors">{item}</a>
             ))}
@@ -148,16 +147,16 @@ export const LandingPage: React.FC = () => {
         <div className="space-y-6">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-violet-50 text-violet-600 rounded-full text-[10px] font-bold tracking-wide uppercase border border-violet-100">
             <Badge variant="info" className="py-0.5 px-1.5 bg-violet-600 text-white uppercase text-[8px]">New</Badge>
-            AI-Powered Finance for a Smarter Future
+            AI-Powered Ledger Reconciliation for Enterprises
           </span>
           
           <h1 className="text-4xl md:text-5.5xl font-black text-slate-900 tracking-tight leading-[1.1] font-outfit">
-            Manage Money <br/>
-            <span className="text-violet-600">Smartly</span>. Live Better.
+            Reconcile Accounts <br/>
+            <span className="text-violet-600">Smartly</span>. Close Books.
           </h1>
           
           <p className="text-slate-500 text-sm md:text-base max-w-lg leading-relaxed font-medium">
-            All-in-one finance app to track expenses, invest, save and grow your wealth with AI insights.
+            Enterprise-grade financial reconciliation engine to track payouts, match statements, identify exceptions, and generate AI-powered audit logs.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -240,7 +239,7 @@ export const LandingPage: React.FC = () => {
           {stats.map((s, idx) => (
             <div key={idx} className="space-y-1">
               <h3 className="text-2xl font-black text-slate-900 font-outfit">{s.value}</h3>
-              <p className="text-[10px] text-slate-450 uppercase font-bold tracking-wider">{s.label}</p>
+              <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{s.label}</p>
             </div>
           ))}
         </div>
@@ -252,7 +251,7 @@ export const LandingPage: React.FC = () => {
           <span className="text-xs font-bold uppercase tracking-widest text-violet-600">Features</span>
           <h2 className="text-3xl font-black text-slate-900 tracking-tight font-outfit max-w-lg mx-auto leading-tight">
             Everything You Need <br/>
-            in <span className="text-violet-600">One Finance App</span>
+            in <span className="text-violet-600">One Reconciliation App</span>
           </h2>
         </div>
 
@@ -264,7 +263,7 @@ export const LandingPage: React.FC = () => {
                   <f.icon className="h-5 w-5" />
                 </div>
                 <h4 className="text-sm font-bold text-slate-900 mb-2 font-outfit">{f.title}</h4>
-                <p className="text-xs text-slate-450 leading-relaxed font-medium">{f.desc}</p>
+                <p className="text-xs text-slate-500 leading-relaxed font-medium">{f.desc}</p>
               </div>
             </Card>
           ))}
@@ -296,13 +295,13 @@ export const LandingPage: React.FC = () => {
                   </div>
                   <div>
                     <h5 className="text-xs font-bold text-slate-900">{item.title}</h5>
-                    <p className="text-[11px] text-slate-450 mt-0.5 leading-relaxed font-medium">{item.desc}</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed font-medium">{item.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="bg-slate-55 border border-slate-100 rounded-2xl p-6 lg:p-8 space-y-6 shadow-sm">
+          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 lg:p-8 space-y-6 shadow-sm">
             <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider font-outfit border-b border-slate-200/60 pb-3">Reconciliation Checklist</h4>
             <div className="space-y-3.5">
               {[
@@ -312,7 +311,7 @@ export const LandingPage: React.FC = () => {
                 { check: 'Flag negative transaction amounts', ok: true },
                 { check: 'Cross-link payments with Gateway settlements', ok: true }
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-3 text-xs font-medium text-slate-650">
+                <div key={idx} className="flex items-center gap-3 text-xs font-medium text-slate-600">
                   <div className="h-5.5 w-5.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
                     <Check className="h-3 w-3" />
                   </div>
@@ -339,7 +338,7 @@ export const LandingPage: React.FC = () => {
                   <item.icon className="h-4 w-4" />
                 </div>
                 <h5 className="text-xs font-bold text-slate-900 font-outfit">{item.title}</h5>
-                <p className="text-[10px] text-slate-455 mt-1 leading-normal font-medium">{item.desc}</p>
+                <p className="text-[10px] text-slate-500 mt-1 leading-normal font-medium">{item.desc}</p>
               </div>
             </Card>
           ))}
@@ -370,7 +369,7 @@ export const LandingPage: React.FC = () => {
             <span className="text-xs font-bold uppercase tracking-widest text-violet-600">How It Works</span>
             <h2 className="text-3xl font-black text-slate-900 tracking-tight font-outfit max-w-lg mx-auto leading-tight">
               Simple Steps to <br/>
-              Financial <span className="text-violet-600">Freedom</span>
+              Perfect <span className="text-violet-600">Reconciliation</span>
             </h2>
           </div>
 
@@ -379,33 +378,67 @@ export const LandingPage: React.FC = () => {
               <div key={idx} className="text-left space-y-3 relative">
                 <span className="text-3xl font-black text-violet-100 font-outfit">{s.num}</span>
                 <h4 className="text-xs font-bold text-slate-900 font-outfit">{s.title}</h4>
-                <p className="text-[11px] text-slate-450 leading-relaxed font-medium">{s.desc}</p>
+                <p className="text-[11px] text-slate-500 leading-relaxed font-medium">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="max-w-7xl mx-auto px-6 py-20 text-center space-y-16 relative z-10">
-        <div className="space-y-3">
-          <span className="text-xs font-bold uppercase tracking-widest text-violet-600">Testimonials</span>
-          <h2 className="text-3xl font-black text-slate-900 font-outfit">Loved by Thousands of Smart Users</h2>
-        </div>
+      {/* Testimonials & Take Control Card */}
+      <section className="max-w-7xl mx-auto px-6 py-20 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+          {/* Take Control Banner */}
+          <div className="bg-[#081325] text-white p-8 rounded-3xl flex flex-col justify-between items-start text-left relative overflow-hidden shadow-xl min-h-[350px]">
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f2038_1px,transparent_1px),linear-gradient(to_bottom,#0f2038_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-10 pointer-events-none" />
+            <div className="space-y-4 relative z-10">
+              <h3 className="text-2xl font-black tracking-tight leading-tight font-outfit">
+                Take Control of <br/>Your Enterprise Ledgers
+              </h3>
+              <p className="text-slate-400 text-xs leading-relaxed max-w-xs font-medium">
+                Join thousands of finance teams managing cash flow and matching payouts with RazorPay.
+              </p>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((t, idx) => (
-            <Card key={idx} className="bg-white border-slate-100 p-6 text-left space-y-4 rounded-2xl flex flex-col justify-between hover:shadow-lg transition-all">
-              <p className="text-xs text-slate-500 italic leading-relaxed">"{t.quote}"</p>
-              <div className="flex items-center gap-3 border-t border-slate-50 pt-4">
-                <img className="h-9 w-9 rounded-full object-cover" src={t.avatar} alt={t.name} />
-                <div>
-                  <h4 className="text-xs font-bold text-slate-900">{t.name}</h4>
-                  <p className="text-[9px] text-slate-400 font-semibold">{t.role}</p>
+            <div className="space-y-4 w-full relative z-10 pt-6">
+              <Link to="/register" className="inline-flex items-center gap-1.5 px-5 py-3 bg-violet-600 hover:bg-violet-750 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-violet-600/25">
+                Get Started Now <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              
+              <div className="bg-[#0b1c34] border border-[#132c50]/65 p-3.5 rounded-xl flex items-center justify-between mt-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-6 w-6 rounded bg-violet-600/10 border border-violet-500/20 text-violet-400 flex items-center justify-center">
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-300">Bank-Level Security</span>
                 </div>
+                <ArrowRight className="h-3.5 w-3.5 text-slate-400" />
               </div>
-            </Card>
-          ))}
+            </div>
+          </div>
+
+          {/* Testimonials Column */}
+          <div className="lg:col-span-2 space-y-6 flex flex-col justify-between">
+            <div className="text-left space-y-2">
+              <span className="text-xs font-bold uppercase tracking-widest text-violet-600">Testimonials</span>
+              <h2 className="text-2xl font-black text-slate-900 font-outfit">Loved by Thousands of Finance Teams</h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1 mt-6">
+              {testimonials.map((t, idx) => (
+                <Card key={idx} className="bg-white border-slate-100 p-6 text-left space-y-4 rounded-2xl flex flex-col justify-between hover:shadow-lg transition-all shadow-sm">
+                  <p className="text-xs text-slate-500 italic leading-relaxed">"{t.quote}"</p>
+                  <div className="flex items-center gap-3 border-t border-slate-50 pt-4">
+                    <img className="h-9 w-9 rounded-full object-cover" src={t.avatar} alt={t.name} />
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-900 font-outfit">{t.name}</h4>
+                      <p className="text-[9px] text-slate-400 font-semibold">{t.role}</p>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -415,7 +448,7 @@ export const LandingPage: React.FC = () => {
           <div className="space-y-3">
             <span className="text-xs font-bold uppercase tracking-widest text-violet-600">Pricing</span>
             <h2 className="text-3xl font-black text-slate-900 tracking-tight font-outfit leading-tight">
-              Choose the Plan That's <span className="text-violet-600">Right for You</span>
+              Choose the Plan That's <span className="text-violet-600">Right for Your Business</span>
             </h2>
           </div>
 
@@ -424,7 +457,7 @@ export const LandingPage: React.FC = () => {
               <Card 
                 key={idx} 
                 className={`bg-white border p-8 text-left rounded-2xl flex flex-col justify-between relative transition-all duration-350 hover:shadow-xl ${
-                  p.popular ? 'border-violet-600 shadow-md ring-1 ring-violet-600/10' : 'border-slate-150'
+                  p.popular ? 'border-violet-600 shadow-md ring-1 ring-violet-600/10' : 'border-slate-200'
                 }`}
               >
                 {p.popular && (
@@ -440,7 +473,7 @@ export const LandingPage: React.FC = () => {
                     <span className="text-[10px] text-slate-400 font-semibold">/ month</span>
                   </div>
                   
-                  <ul className="space-y-2.5 pt-6 border-t border-slate-50 mt-4 text-[11px] font-semibold text-slate-650">
+                  <ul className="space-y-2.5 pt-6 border-t border-slate-50 mt-4 text-[11px] font-semibold text-slate-600">
                     {p.features.map(f => (
                       <li key={f} className="flex items-center gap-2">
                         <Check className="h-3.5 w-3.5 text-violet-600" />
@@ -501,14 +534,14 @@ export const LandingPage: React.FC = () => {
               <span className="text-lg font-extrabold text-white tracking-tight font-outfit">RazorPay</span>
             </div>
             <p className="text-xs text-slate-500 max-w-xs leading-relaxed font-medium">
-              All-in-one finance app to help you manage, track, audit, and optimize your personal and corporate cash flows.
+              Enterprise-grade financial reconciliation engine to track payouts, match statements, identify exceptions, and generate AI-powered audit logs.
             </p>
           </div>
 
           {['Product', 'Solutions', 'Resources', 'Company'].map((title, idx) => (
             <div key={idx} className="space-y-3.5">
               <h4 className="text-xs font-bold uppercase text-white tracking-wider font-outfit">{title}</h4>
-              <ul className="space-y-2 text-xs font-medium text-slate-505">
+              <ul className="space-y-2 text-xs font-medium text-slate-400">
                 {title === 'Product' && ['Features', 'Pricing', 'AI Insights', 'Security'].map(l => <li key={l} className="hover:text-white cursor-pointer transition-colors">{l}</li>)}
                 {title === 'Solutions' && ['Personal Finance', 'Investing', 'Expense Management', 'Budget Planning'].map(l => <li key={l} className="hover:text-white cursor-pointer transition-colors">{l}</li>)}
                 {title === 'Resources' && ['Blog', 'Guides', 'Help Center', 'FAQs'].map(l => <li key={l} className="hover:text-white cursor-pointer transition-colors">{l}</li>)}
@@ -518,7 +551,7 @@ export const LandingPage: React.FC = () => {
           ))}
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-semibold text-slate-650">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-semibold text-slate-500">
           <p>&copy; {new Date().getFullYear()} RazorPay Platform. All rights reserved.</p>
           <div className="flex gap-6">
             <span className="hover:text-slate-400 cursor-pointer">Privacy Policy</span>

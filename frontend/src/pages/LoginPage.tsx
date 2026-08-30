@@ -81,42 +81,6 @@ export const LoginPage: React.FC = () => {
         Authenticate Securely
       </Button>
 
-      {/* Quick Access Profiles */}
-      <div className="mt-8 pt-6 border-t border-slate-100 space-y-3">
-        <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">Quick Access Profiles (Development)</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div 
-            onClick={() => {
-              setEmail('admin@razorpay.com');
-              setPassword('admin123');
-              toast.info('Loaded Admin profile credentials');
-            }}
-            className="bg-white border border-slate-100 hover:border-blue-500/30 hover:bg-slate-50 p-3 rounded-xl cursor-pointer flex justify-between items-center transition-all shadow-sm"
-          >
-            <div>
-              <h4 className="text-[11px] font-bold text-slate-800">Admin Auditor</h4>
-              <p className="text-[9px] text-slate-400 font-semibold mt-0.5">Aditya Sharma</p>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5 text-slate-400"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5l-.5-.5" /></svg>
-          </div>
-
-          <div 
-            onClick={() => {
-              setEmail('rahul@razorpay.com');
-              setPassword('user123');
-              toast.info('Loaded Finance Manager profile credentials');
-            }}
-            className="bg-white border border-slate-100 hover:border-blue-500/30 hover:bg-slate-50 p-3 rounded-xl cursor-pointer flex justify-between items-center transition-all shadow-sm"
-          >
-            <div>
-              <h4 className="text-[11px] font-bold text-slate-800">Finance Manager</h4>
-              <p className="text-[9px] text-slate-400 font-semibold mt-0.5">Neha Goel</p>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5 text-slate-400"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5l-.5-.5" /></svg>
-          </div>
-        </div>
-      </div>
-
       <div className="flex justify-between items-center pt-6 border-t border-slate-100 text-[11px] font-semibold">
         <span className="text-slate-400">Need access? <Link to="/register" className="text-[#0f766e] hover:text-[#0d9488] font-bold transition-colors">Create workspace profile</Link></span>
         <Link to="/" className="text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1">
@@ -126,4 +90,5 @@ export const LoginPage: React.FC = () => {
     </form>
   );
 };
+
 export default LoginPage;
