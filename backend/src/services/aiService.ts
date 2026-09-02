@@ -55,25 +55,25 @@ ${context.transactionsSummary || 'No transactions found.'}
 
 Provide extremely professional, actionable, and specific advice. Always refer to their actual Indian Rupee (₹) amounts, categories, and merchants. Maintain a sophisticated, elite fintech tone. Make your response concise, well-structured with markdown bullet points, and free of filler text. Do not pretend you are executing transactions.`;
 
-  if (groq) {
-    try {
-      const response = await groq.chat.completions.create({
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: query },
-        ],
-        model: 'llama-3.1-8b-instant',
-        temperature: 0.3,
-        max_tokens: 800,
-      });
-      return response.choices[0]?.message?.content || 'Unable to generate response at this moment.';
-    } catch (error) {
-      console.error('Groq API Error, falling back to rule-based engine:', error);
-    }
+  if (!groq) {
+    throw new Error('Groq API is not initialized. Please ensure your GROQ_API_KEY is properly set in the .env file.');
   }
 
-  // Dual-mode fallback engine: Rule-based custom response parser
-  return getMockAIResponse(query, context);
+  try {
+    const response = await groq.chat.completions.create({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: query },
+      ],
+      model: 'llama-3.1-8b-instant',
+      temperature: 0.3,
+      max_tokens: 800,
+    });
+    return response.choices[0]?.message?.content || 'Unable to generate response at this moment.';
+  } catch (error) {
+    console.error('Groq API Error in chat:', error);
+    throw new Error('Failed to generate AI response via Groq.');
+  }
 }
 
 export async function analyzeSpending(userId: string) {
@@ -189,70 +189,6 @@ The JSON must be exactly in this format (no other text around the JSON block):
   };
 }
 
-// Contextual dynamic fallback engine
-function getMockAIResponse(query: string, context: any): string {
-  const q = query.toLowerCase();
-  
-  if (q.includes('reduce') || q.includes('save') || q.includes('cut')) {
-    return `### **RazorPay AI Savings Analysis**
-
-Based on your actual financial data, here are the most effective ways to reduce expenses:
-
-1. **Address Budget Exceedances**: 
-   * Your **Shopping** category is currently heavily over-spent. You have spent **₹51,900** against a **₹15,000** limit. Pausing discretionary purchases on portals like **Flipkart** or **Amazon** for the remainder of this cycle will save you immediate funds.
-2. **Review Recurring Subscriptions**:
-   * You are paying **₹1,827** monthly across platforms like **Netflix** and **Spotify**. Auditing these and shifting to family plans could easily recover **₹500/month**.
-3. **Consolidate Dining Costs**:
-   * You have frequent transactions at **Swiggy** and **Zomato**. Cutting back on food deliveries by just 20% would increase your monthly savings rate by **₹1,500 - ₹2,000**.`;
-  }
-
-  if (q.includes('spend') || q.includes('most') || q.includes('where')) {
-    return `### **RazorPay Spending Breakdown**
-
-Analyzing your transactions, your highest expenditure categories are:
-
-1. **Shopping**: **₹51,900** (primarily driven by a large **₹35,000 Flipkart Apple Watch** purchase).
-2. **Housing**: **₹20,000** (your monthly apartment rent).
-3. **Utilities**: **₹4,199** (including **BESCOM Electricity** and **ACT Broadband**).
-
-*Recommendation*: Discretionary spending on **Shopping** is the primary contributor to your increased expense ratio this month. Restricting this category is vital to returning to a healthy savings rate.`;
-  }
-
-  if (q.includes('afford') || q.includes('purchase') || q.includes('buy')) {
-    // Extract numbers from query
-    const match = q.match(/\d+[,.\d]*/);
-    const amountToBuy = match ? parseFloat(match[0].replace(/,/g, '')) : 10000;
-    const balance = context.totalIncome - context.totalExpense;
-
-    if (balance >= amountToBuy) {
-      return `### **Purchase Affordability Audit**
-
-You are asking about a purchase of **₹${amountToBuy.toLocaleString('en-IN')}**.
-
-* **Monthly Cash Flow**: You currently have a net cash surplus of **₹${balance.toLocaleString('en-IN')}** for this cycle.
-* **Affordability Rating**: **Yes, you can afford it**, but with caveats.
-* **Impact**: While you have the liquidity, this purchase will reduce your monthly savings from **₹${balance.toLocaleString('en-IN')}** to **₹${(balance - amountToBuy).toLocaleString('en-IN')}**. 
-* **Warning**: Since your **Shopping** budget has already exceeded its limit, categorizing this purchase under Shopping will inflate your budget deficit. We suggest deferring this purchase if it is non-essential.`;
-    } else {
-      return `### **Purchase Affordability Audit**
-
-You are asking about a purchase of **₹${amountToBuy.toLocaleString('en-IN')}**.
-
-* **Affordability Rating**: **No, not recommended.**
-* **Analysis**: Your net surplus for this month is **₹${balance.toLocaleString('en-IN')}**, which is less than the cost of the item. Making this purchase now would put you in a negative cash flow state. We advise waiting until your next salary credit.`;
-    }
-  }
-
-  return `### **Welcome to RazorPay Smart Financial Assistant**
- 
-I am ready to help you navigate your finances. Here are some of the actions you can ask me to perform:
- 
-* **"Where am I spending the most?"** - I will analyze your category transactions.
-* **"How can I reduce my expenses?"** - I will list personalized savings avenues.
-* **"Can I afford a ₹15,000 purchase?"** - I will audit your cash flow and budget health.
-* **"Analyze my spending."** - I will give you a comprehensive overview of your financial health.`;
-}
-
 export async function generateReconciliationReport(
   _userId: string,
   stats: { total: number; matched: number; differences: number; matchRate: number },
@@ -325,7 +261,7 @@ A detailed audit of the differences reveals the following core discrepancies:
 3. **Verify Timing Delays**: Double-check bank statements from adjacent months to resolve mismatched cutoff dates.`;
 }
 
-export async function analyzeUploadedImage(userId: string, file: Express.Multer.File) {
+export async function analyzeUploadedImage(_userId: string, file: Express.Multer.File) {
   const systemPrompt = `You are an AI financial assistant. Please analyze the provided image (which may be a receipt, invoice, or financial document).
 Extract key information like:
 - Merchant Name
@@ -349,16 +285,17 @@ Format the response as JSON with the following structure:
     try {
       const response = await groq.chat.completions.create({
         messages: [
+          { role: 'system', content: systemPrompt },
           { 
             role: 'user', 
             content: [
-              { type: 'text', text: systemPrompt },
+              { type: 'text', text: 'Please analyze this receipt/invoice.' },
               { type: 'image_url', image_url: { url: imageUrl } }
-            ] 
-          }
-        ],
+            ]
+          },
+        ] as any,
         model: 'llama-3.2-11b-vision-preview',
-        temperature: 0.2,
+        temperature: 0.1,
       });
 
       const text = response.choices[0]?.message?.content || '{}';
