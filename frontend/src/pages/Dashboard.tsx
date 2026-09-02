@@ -33,20 +33,12 @@ interface ExceptionItem {
   confidence: number;
 }
 
-interface ReviewQueueItem {
-  id: string;
-  issue: string;
-  amount: string;
-  priority: 'HIGH' | 'MEDIUM' | 'LOW';
-}
+
 
 export const Dashboard: React.FC = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [selectedTx, setSelectedTx] = useState<ExceptionItem | null>(null);
-  const [reviewQueue, setReviewQueue] = useState<ReviewQueueItem[]>([
-    { id: 'TX034', issue: 'Missing Invoice', amount: '₹12,000', priority: 'HIGH' },
-    { id: 'TX052', issue: 'Amount Mismatch', amount: '₹8,500', priority: 'MEDIUM' }
-  ]);
+
 
   // Reconciliation statistics
   const totalRecords = 100;
@@ -103,10 +95,7 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  const handleMarkReviewed = (id: string) => {
-    setReviewQueue(reviewQueue.filter(item => item.id !== id));
-    toast.success(`Transaction ${id} marked as reviewed.`);
-  };
+
 
   return (
     <div className="flex flex-col space-y-4 font-sans text-slate-800 antialiased max-h-[calc(100vh-6rem)] overflow-hidden text-xs">
@@ -143,8 +132,8 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 3-Column Compact Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 flex-1 overflow-hidden">
+      {/* 2-Column Compact Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 flex-1 overflow-hidden">
         
         {/* ================= COLUMN 1 ================= */}
         <div className="space-y-4 flex flex-col overflow-hidden">
@@ -166,61 +155,45 @@ export const Dashboard: React.FC = () => {
             ))}
           </div>
 
-          {/* Reconciliation Status Progress */}
-          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col justify-between shrink-0">
-            <div className="border-b border-slate-100 pb-1.5 mb-2">
-              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest font-outfit">Audit Reconciliation Status</h4>
+          {/* AI Insights (Forensic summaries) */}
+          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col shrink-0">
+            <div className="flex items-center gap-1 border-b border-slate-100 pb-1.5 mb-2 shrink-0">
+              <Brain className="h-4 w-4 text-violet-500" />
+              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-wider font-outfit">🤖 AI Reconciliation Insights</h4>
             </div>
-            <div className="space-y-2.5">
+            <ul className="space-y-1.5 text-[9px] font-bold text-slate-650">
               {[
-                { label: 'Matched', count: 87, pct: 87, color: 'bg-emerald-500' },
-                { label: 'Mismatched', count: 8, pct: 8, color: 'bg-rose-500' },
-                { label: 'Missing', count: 3, pct: 3, color: 'bg-amber-500' },
-                { label: 'Duplicate', count: 1, pct: 1, color: 'bg-orange-500' },
-                { label: 'Unresolved', count: 1, pct: 1, color: 'bg-slate-400' }
-              ].map((stat, idx) => (
-                <div key={idx} className="space-y-1">
-                  <div className="flex justify-between items-baseline text-[9px] font-bold">
-                    <span className="text-slate-650 flex items-center gap-1.5">
-                      <span className={`h-2 w-2 rounded-full ${stat.color} inline-block`} />
-                      {stat.label}
-                    </span>
-                    <span className="text-slate-400">{stat.count} items ({stat.pct}%)</span>
-                  </div>
-                  <div className="w-full bg-slate-50 h-1.5 rounded-full overflow-hidden border border-slate-100/50">
-                    <div className={`h-full ${stat.color}`} style={{ width: `${stat.pct}%` }} />
-                  </div>
-                </div>
+                '87% of records reconciled successfully.',
+                'Discrepancies predominantly driven by amount differences.',
+                '3 missing invoices isolated from the ledger source.',
+                '₹42,500 requires human review queue actions.'
+              ].map((insightStr, idx) => (
+                <li key={idx} className="flex gap-1.5 items-start">
+                  <span className="text-violet-500">•</span>
+                  <span className="leading-tight">{insightStr}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           </Card>
 
-          {/* Data Sources processed */}
-          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col justify-between flex-1 overflow-y-auto">
-            <div className="border-b border-slate-100 pb-1.5 mb-2 shrink-0">
-              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest font-outfit">Active Ledger Sources</h4>
+          {/* Match Rate Accuracy Trend (Mini Recharts Graph) */}
+          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col shrink-0">
+            <div className="border-b border-slate-100 pb-1.5 mb-2">
+              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest font-outfit">Match Rate Trend</h4>
             </div>
-            <div className="space-y-2">
-              {[
-                { name: 'Bank Transactions Feed', records: '100 Records', val: '₹12,45,000' },
-                { name: 'Invoice Ledger Source', records: '98 Records', val: '₹12,20,000' },
-                { name: 'Payment Gateway Link', records: '100 Records', val: '₹12,40,000' }
-              ].map((src, idx) => (
-                <div key={idx} className="bg-slate-50/50 border border-slate-100 p-2.5 rounded-xl flex justify-between items-center">
-                  <div className="space-y-1 text-left">
-                    <h5 className="text-[10px] font-bold text-slate-800 flex items-center gap-1.5">
-                      <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />
-                      {src.name}
-                    </h5>
-                    <div className="flex gap-2 text-[8px] text-slate-400 font-bold">
-                      <span>{src.records}</span>
-                      <span>•</span>
-                      <span className="text-slate-500">{src.val}</span>
-                    </div>
-                  </div>
-                  <span className="text-[8px] uppercase tracking-wider text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded font-extrabold">Active</span>
-                </div>
-              ))}
+
+            <div className="h-[90px] w-full pt-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={trendData} margin={{ top: 5, right: 5, left: -35, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <XAxis dataKey="name" stroke="#94a3b8" fontSize={8} tickLine={false} />
+                  <YAxis stroke="#94a3b8" fontSize={8} tickLine={false} unit="%" />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '8px', fontSize: '9px', padding: '4px' }}
+                  />
+                  <Line type="monotone" dataKey="rate" stroke="#00a896" strokeWidth={2.5} dot={{ r: 2.5, fill: '#00a896', strokeWidth: 0 }} />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </Card>
         </div>
@@ -327,97 +300,7 @@ export const Dashboard: React.FC = () => {
           </Card>
         </div>
 
-        {/* ================= COLUMN 3 ================= */}
-        <div className="space-y-4 flex flex-col overflow-hidden">
-          {/* AI Insights (Forensic summaries) */}
-          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col shrink-0">
-            <div className="flex items-center gap-1 border-b border-slate-100 pb-1.5 mb-2 shrink-0">
-              <Brain className="h-4 w-4 text-violet-500" />
-              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-wider font-outfit">🤖 AI Reconciliation Insights</h4>
-            </div>
-            <ul className="space-y-1.5 text-[9px] font-bold text-slate-650">
-              {[
-                '87% of records reconciled successfully.',
-                'Discrepancies predominantly driven by amount differences.',
-                '3 missing invoices isolated from the ledger source.',
-                '₹42,500 requires human review queue actions.'
-              ].map((insightStr, idx) => (
-                <li key={idx} className="flex gap-1.5 items-start">
-                  <span className="text-violet-500">•</span>
-                  <span className="leading-tight">{insightStr}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
 
-          {/* Human Review Queue */}
-          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col overflow-hidden flex-1">
-            <div className="border-b border-slate-100 pb-1.5 mb-2 shrink-0">
-              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest font-outfit">Human Review Queue</h4>
-            </div>
-
-            <div className="overflow-y-auto flex-1 border border-slate-100 rounded-xl">
-              {reviewQueue.length === 0 ? (
-                <div className="text-center py-6 text-slate-400 font-bold text-[10px]">
-                  🎉 All exceptions reviewed and settled!
-                </div>
-              ) : (
-                <table className="w-full text-left text-[10px] border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold">
-                      <th className="py-2 px-3">ID</th>
-                      <th className="py-2 px-3">Issue</th>
-                      <th className="py-2 px-3">Priority</th>
-                      <th className="py-2 px-3 text-center">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-50 font-semibold text-slate-700">
-                    {reviewQueue.map((item) => (
-                      <tr key={item.id} className="hover:bg-slate-50/50">
-                        <td className="py-2 px-3 font-bold text-slate-900">{item.id}</td>
-                        <td className="py-2 px-3 truncate max-w-[80px]">{item.issue}</td>
-                        <td className="py-2 px-3">
-                          <Badge variant={item.priority === 'HIGH' ? 'danger' : 'warning'} className="text-[8px] font-extrabold py-0 px-1">
-                            {item.priority}
-                          </Badge>
-                        </td>
-                        <td className="py-2 px-3 text-center">
-                          <button 
-                            onClick={() => handleMarkReviewed(item.id)}
-                            className="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-650 font-bold rounded-md transition-colors border border-emerald-100 text-[8px]"
-                          >
-                            Settle
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </Card>
-
-          {/* Match Rate Accuracy Trend (Mini Recharts Graph) */}
-          <Card className="bg-white border-slate-100 p-3.5 rounded-2xl shadow-sm text-left flex flex-col shrink-0">
-            <div className="border-b border-slate-100 pb-1.5 mb-2">
-              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest font-outfit">Match Rate Trend</h4>
-            </div>
-
-            <div className="h-[90px] w-full pt-1">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={trendData} margin={{ top: 5, right: 5, left: -35, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                  <XAxis dataKey="name" stroke="#94a3b8" fontSize={8} tickLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={8} tickLine={false} unit="%" />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '8px', fontSize: '9px', padding: '4px' }}
-                  />
-                  <Line type="monotone" dataKey="rate" stroke="#00a896" strokeWidth={2.5} dot={{ r: 2.5, fill: '#00a896', strokeWidth: 0 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-        </div>
 
       </div>
 
