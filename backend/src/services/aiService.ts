@@ -324,3 +324,64 @@ A detailed audit of the differences reveals the following core discrepancies:
 2. **Re-sync Ledger Systems**: Update the local ERP database with the missing settlement IDs to reconcile pending invoices.
 3. **Verify Timing Delays**: Double-check bank statements from adjacent months to resolve mismatched cutoff dates.`;
 }
+
+export async function analyzeUploadedImage(userId: string, file: Express.Multer.File) {
+  const systemPrompt = `You are an AI financial assistant. Please analyze the provided image (which may be a receipt, invoice, or financial document).
+Extract key information like:
+- Merchant Name
+- Total Amount
+- Date
+- Items/Categories
+
+Format the response as JSON with the following structure:
+{
+  "merchant": "Name",
+  "amount": 100.00,
+  "date": "YYYY-MM-DD",
+  "category": "Category",
+  "items": ["item1", "item2"]
+}`;
+
+  const base64Image = file.buffer.toString('base64');
+  const imageUrl = `data:${file.mimetype};base64,${base64Image}`;
+
+  if (groq) {
+    try {
+      const response = await groq.chat.completions.create({
+        messages: [
+          { 
+            role: 'user', 
+            content: [
+              { type: 'text', text: systemPrompt },
+              { type: 'image_url', image_url: { url: imageUrl } }
+            ] 
+          }
+        ],
+        model: 'llama-3.2-11b-vision-preview',
+        temperature: 0.2,
+      });
+
+      const text = response.choices[0]?.message?.content || '{}';
+      
+      // Try to parse JSON from response if it returned plain text with markdown
+      let parsed = {};
+      try {
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          parsed = JSON.parse(jsonMatch[0]);
+        } else {
+          parsed = JSON.parse(text);
+        }
+      } catch(e) {
+        return { rawText: text };
+      }
+      return parsed;
+
+    } catch (error) {
+      console.error('Groq Vision API Error:', error);
+      throw new Error('Failed to analyze image with AI');
+    }
+  }
+  
+  throw new Error('Groq API not initialized');
+}
